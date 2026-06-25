@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+    <nav class="navbar" th:fragment="navbar">
+        <a href="/vista/home" class="navbar-brand">MypesPlatform</a>
+        <div class="navbar-links">
+            <a href="/vista/home">Inicio</a>
+            <a href="/vista/register" id="nav-register" class="btn btn-outline">Registro</a>
+            <a href="/vista/formlogin" id="nav-login" class="btn">Login</a>
+            <a href="/vista/miTienda" id="nav-mi-tienda" class="btn btn-outline" style="display:none;">Mi Tienda</a>
+            <a href="/vista/agregarProducto" id="nav-admin" class="btn" style="display:none;">Panel ADMIN</a>
+            <a href="#" id="nav-logout" class="btn btn-outline" style="display:none;" onclick="logout(); return false;">Cerrar sesión</a>
+        </div>
+    </nav>
+</body>
+</html>

@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home - MypesPlatform</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+
+<body>
+
+    <div th:replace="~{fragments/nav :: navbar}"></div>
+
+    <div class="container">
+        <div class="search-bar">
+            <input type="search" id="buscador" placeholder="Buscar tiendas o productos por nombre..." autocomplete="off">
+        </div>
+
+        <div id="vista-publica">
+            <section class="section-block">
+                <h2>Tiendas disponibles</h2>
+                <div class="stores-grid" id="grid-tiendas-publicas">
+                    <a th:each="t : ${tiendas}"
+                       th:href="@{/vista/tienda/{id}(id=${t.tiendaId})}"
+                       class="store-card filtro-item"
+                       th:attr="data-nombre=${t.nombre}">
+                        <img class="store-card-img" th:alt="${t.nombre}"
+                             th:src="'https://ui-avatars.com/api/?name=' + ${#strings.replace(t.nombre, ' ', '+')} + '&size=240&background=e8eef5&color=0056b3&bold=true'">
+                        <div class="store-card-body">
+                            <h3 class="store-card-title" th:text="${t.nombre}"></h3>
+                            <p class="store-card-address" th:text="${t.direccion}"></p>
+                        </div>
+                    </a>
+                    <p th:if="${#lists.isEmpty(tiendas)}" class="empty-msg">No hay tiendas disponibles.</p>
+                </div>
+            </section>
+
+            <section class="section-block">
+                <h2>Productos</h2>
+                <div class="products-grid" id="grid-productos-publicos">
+                    <div class="card filtro-item" th:each="p : ${productos}" th:attr="data-nombre=${p.nombre}">
+                        <div class="card-title" th:text="${p.nombre}"></div>
+                        <div class="card-price" th:text="'S/ ' + ${p.precio}"></div>
+                        <div class="card-stock" th:text="'Stock: ' + ${p.stock}"></div>
+                        <div class="card-footer" th:if="${p.tiendaId != null}">
+                            <a th:href="@{/vista/tienda/{id}(id=${p.tiendaId})}">Ver tienda</a>
+                        </div>
+                    </div>
+                    <p th:if="${#lists.isEmpty(productos)}" class="empty-msg">No hay productos disponibles.</p>
+                </div>
+            </section>
+        </div>
+
+        <div id="vista-admin" style="display:none;">
+            <section class="section-block">
+                <h2>Mi tienda</h2>
+                <p class="section-subtitle">Bienvenido. Aquí ves únicamente tu negocio y tus productos.</p>
+                <div class="stores-grid" id="grid-tienda-admin"></div>
+            </section>
+
+            <section class="section-block">
+                <h2>Mis productos</h2>
+                <div class="products-grid" id="grid-productos-admin"></div>
+            </section>
+        </div>
+    </div>
+
+    <script th:src="@{/js/app.js}"></script>
+    <script>
+        document.getElementById("buscador").addEventListener("input", function () {
+            const termino = this.value;
+            filtrarPorNombre("#vista-publica .filtro-item", termino);
+            filtrarPorNombre("#vista-admin .filtro-item", termino);
+        });
+
+        function renderTarjetaTienda(tienda, esEnlace) {
+            const img = imagenTienda(tienda.nombre);
+            const cuerpo = `
+                <img class="store-card-img" src="${img}" alt="${tienda.nombre}">
+                <div class="store-card-body">
+                    <h3 class="store-card-title">${tienda.nombre}</h3>
+                    <p class="store-card-address">${tienda.direccion}</p>
+                </div>`;
+            if (esEnlace) {
+                return `<a href="/vista/tienda/${tienda.tiendaId}" class="store-card filtro-item" data-nombre="${tienda.nombre}">${cuerpo}</a>`;
+            }
+            return `<article class="store-card filtro-item" data-nombre="${tienda.nombre}">${cuerpo}</article>`;
+        }
+
+        function renderTarjetaProducto(p, mostrarTienda) {
+            const pie = mostrarTienda && p.tiendaId
+                ? `<div class="card-footer"><a href="/vista/tienda/${p.tiendaId}">Ver tienda</a></div>` : "";
+            return `<div class="card filtro-item" data-nombre="${p.nombre}">
+                <div class="card-title">${p.nombre}</div>
+                <div class="card-price">S/ ${p.precio}</div>
+                <div class="card-stock">Stock: ${p.stock}</div>
+                ${pie}
+            </div>`;
+        }
+
+        async function cargarHomeAdmin() {
+            const headers = authHeaders();
+            const [tiendaResp, prodResp] = await Promise.all([
+                fetch("/tienda/mi-tienda", { headers }),
+                fetch("/productos/mi-tienda", { headers })
+            ]);
+
+            document.getElementById("vista-publica").style.display = "none";
+            document.getElementById("vista-admin").style.display = "block";
+
+            const gridTienda = document.getElementById("grid-tienda-admin");
+            const gridProd = document.getElementById("grid-productos-admin");
+
+            if (tiendaResp.ok) {
+                const tienda = await tiendaResp.json();
+                gridTienda.innerHTML = renderTarjetaTienda(tienda, false);
+            } else {
+                gridTienda.innerHTML = "<p class='empty-msg'>Aún no tienes una tienda registrada.</p>";
+            }
+
+            if (!prodResp.ok) {
+                gridProd.innerHTML = "<p class='empty-msg'>No se pudieron cargar tus productos.</p>";
+                return;
+            }
+
+            const productos = await prodResp.json();
+            if (productos.length === 0) {
+                gridProd.innerHTML = "<p class='empty-msg'>No tienes productos registrados.</p>";
+                return;
+            }
+            gridProd.innerHTML = productos.map(function (p) {
+                return renderTarjetaProducto(p, false);
+            }).join("");
+        }
+
+        document.addEventListener("DOMContentLoaded", async function () {
+            await initNavbar();
+            if (getToken() && await esAdmin()) {
+                await cargarHomeAdmin();
+            }
+        });
+    </script>
+</body>
+
+</html>
