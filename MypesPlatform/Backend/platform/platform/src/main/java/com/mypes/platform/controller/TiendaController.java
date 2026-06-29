@@ -1,5 +1,8 @@
 package com.mypes.platform.controller;
 
+
+import java.util.List;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,8 +16,10 @@ import com.mypes.platform.service.TiendaService;
 
 
 
+
+
 @RestController
-@RequestMapping("/tienda")
+@RequestMapping("/api/tienda")
 public class TiendaController {
 
     private final TiendaService tiendaService;
@@ -34,9 +39,9 @@ public class TiendaController {
         TiendaDTO respuesta = tiendaService.save(dto);
         return respuesta;
     }
-    
 
-
-
-
+    @GetMapping("/listar")
+    public List<TiendaDTO> listarTiendas() {
+        return tiendaService.findAll();
+    }
 }

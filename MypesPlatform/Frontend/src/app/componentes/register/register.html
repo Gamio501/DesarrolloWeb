@@ -1,1 +1,14 @@
-<p>register works!</p>
+
+
+<form [formGroup]="registerForm" (ngSubmit)="enviarDatos()">
+
+    <label >Nombres</label>
+    <input type="text" formControlName="nombres" placeholder="ingrese sus nombres">
+    <label >Apellidos</label>
+    <input type="text" formControlName="apellidos" placeholder="ingrese sus apellidos">
+    <label >Correo electronico</label>
+    <input type="email" formControlName="corree" placeholder="ingrese su correo electronico">
+    <label >Contraseña</label>
+    <input type="password" formControlName="password" placeholder="ingrese una contraseña">
+
+</form>

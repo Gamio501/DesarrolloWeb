@@ -97,6 +97,7 @@ public class TiendaServiceImpl implements TiendaService{
                     .nombre(tienda.getNombre())
                     .direccion(tienda.getDireccion())
                     .telefono(tienda.getTelefono())
+                    .usuarioId(tienda.getUsuario().getUsuarioId())
                     .build());
         }
 
