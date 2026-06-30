@@ -49,6 +49,8 @@ public class TiendaServiceImpl implements TiendaService{
         .nombre(dto.getNombre())
         .direccion(dto.getDireccion())
         .telefono(dto.getTelefono())
+        .latitud(dto.getLatitud())
+        .longitud(dto.getLongitud())
         .usuario(usuario)
         .build();
 
@@ -59,6 +61,8 @@ public class TiendaServiceImpl implements TiendaService{
         .nombre(guardado.getNombre())
         .direccion(guardado.getDireccion())
         .telefono(guardado.getTelefono())
+        .latitud(guardado.getLatitud())
+        .longitud(guardado.getLongitud())
         .usuarioId(guardado.getUsuario().getUsuarioId()) 
         .build();  
         
@@ -77,12 +81,40 @@ public class TiendaServiceImpl implements TiendaService{
                 .nombre(tienda.getNombre())
                 .direccion(tienda.getDireccion())
                 .telefono(tienda.getTelefono())
+                .latitud(tienda.getLatitud())
+                .longitud(tienda.getLongitud())
                 .build();
     }
 
     @Override
     public TiendaDTO update(TiendaDTO dto) {
-        throw new UnsupportedOperationException("Unimplemented method 'update'");
+        Tienda existente = tiendaRepository.findById(dto.getTiendaId())
+                .orElseThrow(() -> new RuntimeException("Tienda no encontrada"));
+
+        validarPropietario(existente.getUsuario().getUsuarioId());
+
+        if (dto.getNombre() != null && !dto.getNombre().isEmpty())
+            existente.setNombre(dto.getNombre());
+        if (dto.getDireccion() != null && !dto.getDireccion().isEmpty())
+            existente.setDireccion(dto.getDireccion());
+        if (dto.getTelefono() != null && !dto.getTelefono().isEmpty())
+            existente.setTelefono(dto.getTelefono());
+        if (dto.getLatitud() != null)
+            existente.setLatitud(dto.getLatitud());
+        if (dto.getLongitud() != null)
+            existente.setLongitud(dto.getLongitud());
+
+        Tienda guardado = tiendaRepository.save(existente);
+
+        return TiendaDTO.builder()
+                .tiendaId(guardado.getTiendaId())
+                .nombre(guardado.getNombre())
+                .direccion(guardado.getDireccion())
+                .telefono(guardado.getTelefono())
+                .latitud(guardado.getLatitud())
+                .longitud(guardado.getLongitud())
+                .usuarioId(guardado.getUsuario().getUsuarioId())
+                .build();
     }
 
     @Override
@@ -115,6 +147,8 @@ public class TiendaServiceImpl implements TiendaService{
                 .nombre(tienda.getNombre())
                 .direccion(tienda.getDireccion())
                 .telefono(tienda.getTelefono())
+                .latitud(tienda.getLatitud())
+                .longitud(tienda.getLongitud())
                 .usuarioId(usuarioId)
                 .build();
     }

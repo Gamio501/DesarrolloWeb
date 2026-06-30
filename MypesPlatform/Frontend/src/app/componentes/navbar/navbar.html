@@ -1,1 +1,13 @@
-<p>navbar works!</p>
+<nav>
+  <a routerLink="/home">Inicio</a>
+  <a routerLink="/mapa">Mapa</a>
+  <a routerLink="/login">Login</a>
+  <a routerLink="/register">Registro</a>
+  @if (authService.isAdmin()) {
+    <a routerLink="/mi-tienda">Mi Tienda</a>
+    <a routerLink="/agregar-producto">Agregar Producto</a>
+  }
+  @if (authService.hasToken()) {
+    <button (click)="logout()">Cerrar sesión</button>
+  }
+</nav>

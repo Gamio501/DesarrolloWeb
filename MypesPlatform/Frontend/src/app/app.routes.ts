@@ -27,6 +27,11 @@ export const routes: Routes = [
       import('./componentes/tienda/tienda').then((m) => m.Tienda),
   },
   {
+    path: 'mapa',
+    loadComponent: () =>
+      import('./componentes/mapa/mapa').then((m) => m.Mapa),
+  },
+  {
     path: 'mi-tienda',
     canActivate: [adminGuard],
     loadComponent: () =>
