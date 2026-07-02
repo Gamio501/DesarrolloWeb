@@ -1,0 +1,18 @@
+<nav class="navbar" role="navigation" aria-label="Navegación principal">
+  <a routerLink="/home" class="navbar-brand" aria-label="Ir al inicio">MypesPlatform</a>
+  <div class="navbar-links">
+    <a routerLink="/home" routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}">Inicio</a>
+    <a routerLink="/mapa" routerLinkActive="active-link">Mapa</a>
+    @if (!(isLoggedIn$ | async)) {
+      <a routerLink="/register" class="btn btn-outline btn-sm">Registro</a>
+      <a routerLink="/login" class="btn btn-sm">Login</a>
+    }
+    @if (isAdmin) {
+      <a routerLink="/mi-tienda" class="btn btn-outline btn-sm">Mi Tienda</a>
+      <a routerLink="/agregar-producto" class="btn btn-sm">Panel ADMIN</a>
+    }
+    @if (isLoggedIn$ | async) {
+      <button (click)="logout()" class="btn btn-outline btn-sm">Cerrar sesión</button>
+    }
+  </div>
+</nav>

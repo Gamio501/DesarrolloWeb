@@ -1,0 +1,118 @@
+<div class="form-container form-container-wide fade-in">
+  <h2 class="text-center">Crear cuenta</h2>
+  <p class="text-center form-hint">
+    Registra tu usuario y, si eres dueño de negocio, tu tienda en un solo paso.
+  </p>
+
+  @if (errorMessage) {
+    <div class="alert alert-error" role="alert">{{ errorMessage }}</div>
+  }
+  @if (successMessage) {
+    <div class="alert alert-success" role="alert">{{ successMessage }}</div>
+  }
+
+  <form [formGroup]="registerForm" (ngSubmit)="onSubmit()" novalidate>
+    <fieldset class="form-section" [attr.disabled]="step === 'redirecting'">
+      <legend>Datos de usuario</legend>
+
+      <div class="form-group">
+        <label for="username">Usuario</label>
+        <input
+          id="username"
+          type="text"
+          formControlName="username"
+          placeholder="Nombre de usuario"
+          [attr.aria-invalid]="registerForm.get('username')?.invalid && registerForm.get('username')?.touched"
+        />
+        @if (registerForm.get('username')?.invalid && registerForm.get('username')?.touched) {
+          <small class="text-error">Mínimo 3 caracteres.</small>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="password">Contraseña</label>
+        <input
+          id="password"
+          type="password"
+          formControlName="password"
+          placeholder="Mínimo 4 caracteres"
+          [attr.aria-invalid]="registerForm.get('password')?.invalid && registerForm.get('password')?.touched"
+        />
+        @if (registerForm.get('password')?.invalid && registerForm.get('password')?.touched) {
+          <small class="text-error">Mínimo 4 caracteres.</small>
+        }
+      </div>
+
+      <div class="form-group">
+        <label for="rol">Tipo de cuenta</label>
+        <select id="rol" formControlName="rol">
+          <option value="CLIENTE">Cliente (comprar)</option>
+          <option value="ADMIN">Dueño de tienda (vender)</option>
+        </select>
+      </div>
+    </fieldset>
+
+    @if (esAdmin) {
+      <fieldset class="form-section fade-in" [attr.disabled]="step === 'redirecting'">
+        <legend>Datos de la tienda</legend>
+
+        <div class="form-group">
+          <label for="nombreTienda">Nombre de la tienda</label>
+          <input
+            id="nombreTienda"
+            type="text"
+            formControlName="nombreTienda"
+            placeholder="Ej. Mi Bodega"
+          />
+          @if (registerForm.get('nombreTienda')?.invalid && registerForm.get('nombreTienda')?.touched) {
+            <small class="text-error">El nombre es obligatorio.</small>
+          }
+        </div>
+
+        <div class="form-group">
+          <label for="direccion">Dirección</label>
+          <input
+            id="direccion"
+            type="text"
+            formControlName="direccion"
+            placeholder="Av. Principal 123"
+          />
+          @if (registerForm.get('direccion')?.invalid && registerForm.get('direccion')?.touched) {
+            <small class="text-error">La dirección es obligatoria.</small>
+          }
+        </div>
+
+        <div class="form-group">
+          <label for="telefono">Teléfono</label>
+          <input
+            id="telefono"
+            type="text"
+            formControlName="telefono"
+            placeholder="999 999 999"
+          />
+          @if (registerForm.get('telefono')?.invalid && registerForm.get('telefono')?.touched) {
+            <small class="text-error">El teléfono es obligatorio.</small>
+          }
+        </div>
+      </fieldset>
+    }
+
+    <button
+      type="submit"
+      class="btn btn-block"
+      [disabled]="registerForm.invalid || isLoading"
+    >
+      @if (isLoading) {
+        <span class="spinner" style="width:18px;height:18px;border-width:2px;"></span>
+        Registrando...
+      } @else {
+        Registrarse
+      }
+    </button>
+
+    <p class="text-center form-hint" style="margin-top: var(--spacing-lg);">
+      ¿Ya tienes cuenta?
+      <a routerLink="/login">Iniciar sesión</a>
+    </p>
+  </form>
+</div>

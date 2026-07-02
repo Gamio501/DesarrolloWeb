@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-PlatformApplication<platform>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.mypes.platform.PlatformApplication",
+            "projectName": "platform",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}

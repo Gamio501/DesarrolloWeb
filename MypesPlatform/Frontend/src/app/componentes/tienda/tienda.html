@@ -1,0 +1,57 @@
+@if (isLoading) {
+  <div class="loading-spinner" role="status" aria-label="Cargando tienda">
+    <div class="spinner"></div>
+    <span class="text-muted">Cargando tienda...</span>
+  </div>
+}
+
+@if (error) {
+  <div class="alert alert-error fade-in" role="alert">{{ error }}</div>
+  <div class="text-center" style="margin-top: var(--spacing-lg);">
+    <a routerLink="/home" class="btn">Volver al inicio</a>
+  </div>
+}
+
+@if (tienda && !isLoading && !error) {
+  <div class="fade-in">
+    <div class="store-detail-header">
+      <img
+        class="store-header-img"
+        [src]="imagenTienda(tienda.nombre)"
+        [alt]="tienda.nombre"
+      />
+      <div class="store-header-info">
+        <h1>{{ tienda.nombre }}</h1>
+        <p class="store-header-detail">
+          <strong>Dirección:</strong> {{ tienda.direccion }}
+        </p>
+        <p class="store-header-detail">
+          <strong>Teléfono:</strong> {{ tienda.telefono }}
+        </p>
+      </div>
+    </div>
+
+    <section class="section-block" style="margin-top: var(--spacing-xl);">
+      <h2>Productos en venta</h2>
+
+      @if (productos.length === 0) {
+        <p class="empty-msg">Esta tienda aún no tiene productos registrados.</p>
+      } @else {
+        <div class="products-grid">
+          @for (p of productos; track p.productoId) {
+            <div class="card fade-in">
+              <div class="card-title">{{ p.nombre }}</div>
+              <div class="card-price">S/ {{ p.precio }}</div>
+              <div class="card-stock">Stock disponible: {{ p.stock }}</div>
+            </div>
+          }
+        </div>
+      }
+    </section>
+
+    <div class="actions-row" style="margin-top: var(--spacing-lg);">
+      <a routerLink="/home" class="btn btn-outline">Volver al inicio</a>
+      <a routerLink="/mapa" class="btn">Ver en el mapa</a>
+    </div>
+  </div>
+}

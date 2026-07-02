@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro - MypesPlatform</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+
+<body>
+
+    <div th:replace="~{fragments/nav :: navbar}"></div>
+
+    <div class="container">
+        <div class="form-container form-container-wide">
+            <h2 class="text-center">Crear cuenta</h2>
+            <p class="text-center form-hint">Registra tu usuario y, si eres dueño de negocio, tu tienda en un solo paso.</p>
+
+            <form id="formRegister">
+                <fieldset class="form-section">
+                    <legend>Datos de usuario</legend>
+                    <div class="form-group">
+                        <label for="username">Usuario</label>
+                        <input type="text" id="username" placeholder="Nombre de usuario" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Contraseña</label>
+                        <input type="password" id="password" placeholder="Mínimo 4 caracteres" required minlength="4">
+                    </div>
+                    <div class="form-group">
+                        <label for="rol">Tipo de cuenta</label>
+                        <select id="rol" required>
+                            <option value="CLIENTE">Cliente (comprar)</option>
+                            <option value="ADMIN">Dueño de tienda (vender)</option>
+                        </select>
+                    </div>
+                </fieldset>
+
+                <fieldset class="form-section" id="seccion-tienda">
+                    <legend>Datos de la tienda</legend>
+                    <div class="form-group">
+                        <label for="nombreTienda">Nombre de la tienda</label>
+                        <input type="text" id="nombreTienda" placeholder="Ej. Mi Bodega">
+                    </div>
+                    <div class="form-group">
+                        <label for="direccion">Dirección</label>
+                        <input type="text" id="direccion" placeholder="Av. Principal 123">
+                    </div>
+                    <div class="form-group">
+                        <label for="telefono">Teléfono</label>
+                        <input type="text" id="telefono" placeholder="999 999 999">
+                    </div>
+                </fieldset>
+
+                <button type="submit">Registrarse</button>
+                <p id="mensaje" class="text-center"></p>
+                <p class="text-center form-hint">
+                    ¿Ya tienes cuenta? <a href="/vista/formlogin">Iniciar sesión</a>
+                </p>
+            </form>
+        </div>
+    </div>
+
+    <script th:src="@{/js/app.js}"></script>
+    <script>
+        const rolSelect = document.getElementById("rol");
+        const seccionTienda = document.getElementById("seccion-tienda");
+
+        function actualizarCamposTienda() {
+            const esDueno = rolSelect.value === "ADMIN";
+            seccionTienda.style.display = esDueno ? "block" : "none";
+            document.getElementById("nombreTienda").required = esDueno;
+            document.getElementById("direccion").required = esDueno;
+            document.getElementById("telefono").required = esDueno;
+        }
+
+        rolSelect.addEventListener("change", actualizarCamposTienda);
+        actualizarCamposTienda();
+
+        document.getElementById("formRegister").addEventListener("submit", async function (e) {
+            e.preventDefault();
+            const mensaje = document.getElementById("mensaje");
+            const btn = this.querySelector("button");
+            mensaje.textContent = "";
+            mensaje.className = "text-center";
+            btn.disabled = true;
+            btn.textContent = "Registrando...";
+
+            const username = document.getElementById("username").value.trim();
+            const password = document.getElementById("password").value;
+            const rol = rolSelect.value;
+
+            try {
+                const registro = await fetch("/auth/register", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ username, password, rol })
+                });
+
+                if (!registro.ok) {
+                    throw new Error("No se pudo registrar el usuario. Verifica los datos.");
+                }
+
+                const datosRegistro = await registro.json();
+
+                const login = await fetch("/auth/login", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ username, password })
+                });
+
+                if (!login.ok) {
+                    throw new Error("Usuario creado, pero no se pudo iniciar sesión automáticamente.");
+                }
+
+                const auth = await login.json();
+                localStorage.setItem("token", auth.token);
+
+                if (rol === "ADMIN") {
+                    const tiendaResp = await fetch("/tienda/guardar", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Authorization": "Bearer " + auth.token
+                        },
+                        body: JSON.stringify({
+                            nombre: document.getElementById("nombreTienda").value.trim(),
+                            direccion: document.getElementById("direccion").value.trim(),
+                            telefono: document.getElementById("telefono").value.trim(),
+                            usuarioId: datosRegistro.usuarioId
+                        })
+                    });
+
+                    if (!tiendaResp.ok) {
+                        throw new Error("Usuario creado, pero hubo un error al registrar la tienda.");
+                    }
+                }
+
+                mensaje.className = "text-success text-center";
+                mensaje.textContent = "Registro completado. Redirigiendo...";
+                setTimeout(function () {
+                    window.location.href = "/vista/home";
+                }, 1200);
+            } catch (err) {
+                mensaje.className = "text-error text-center";
+                mensaje.textContent = err.message || "Error en el registro.";
+                btn.disabled = false;
+                btn.textContent = "Registrarse";
+            }
+        });
+
+        document.addEventListener("DOMContentLoaded", initNavbar);
+    </script>
+</body>
+
+</html>

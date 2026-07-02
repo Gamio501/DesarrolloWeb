@@ -1,0 +1,79 @@
+<section class="mapa-layout">
+
+  <!-- Panel lateral de tiendas -->
+  <aside class="panel-tiendas">
+    <div class="panel-header">
+      <div class="panel-icon">🏪</div>
+      <div>
+        <h2>Tiendas MYPEs</h2>
+        <p class="panel-subtitle">{{ tiendas.length }} tiendas registradas</p>
+      </div>
+    </div>
+
+    <!-- Estado de ubicación del usuario -->
+    <div class="ubicacion-card" [ngClass]="{
+      'ubicacion-ok':    estadoUbicacion === 'ok',
+      'ubicacion-error': estadoUbicacion === 'error',
+      'ubicacion-carga': estadoUbicacion === 'cargando'
+    }">
+      @if (estadoUbicacion === 'cargando') {
+        <span class="spinner-sm"></span>
+        <span>Detectando tu ubicación...</span>
+      }
+      @if (estadoUbicacion === 'ok') {
+        <span>📍</span>
+        <span>Ubicación detectada</span>
+      }
+      @if (estadoUbicacion === 'error') {
+        <span>⚠️</span>
+        <span>{{ errorUbicacion }}</span>
+      }
+    </div>
+
+    <!-- Cargando tiendas -->
+    @if (cargandoTiendas) {
+      <div class="carga-tiendas">
+        <span class="spinner-sm"></span>
+        <span>Cargando tiendas...</span>
+      </div>
+    }
+
+    <!-- Lista de tiendas -->
+    <ul class="lista-tiendas">
+      @for (tienda of tiendas; track tienda.tiendaId) {
+        <li
+          class="tienda-item"
+          [class.activa]="tiendaSeleccionada?.tiendaId === tienda.tiendaId"
+          (click)="seleccionarTienda(tienda)"
+        >
+          <div class="tienda-nombre">{{ tienda.nombre }}</div>
+          <div class="tienda-dir">📍 {{ tienda.direccion }}</div>
+          <div class="tienda-tel">📞 {{ tienda.telefono }}</div>
+          @if (tienda.latitud && tienda.longitud) {
+            <span class="badge-mapa">Ver en mapa →</span>
+          } @else {
+            <span class="badge-sin-coords">Sin coordenadas</span>
+          }
+        </li>
+      }
+    </ul>
+  </aside>
+
+  <!-- Contenedor del mapa Leaflet -->
+  <div class="mapa-container">
+    <div id="mapa-leaflet"></div>
+
+    <!-- Leyenda -->
+    <div class="mapa-leyenda">
+      <div class="leyenda-item">
+        <span class="dot dot-usuario"></span>
+        <span>Tu ubicación</span>
+      </div>
+      <div class="leyenda-item">
+        <span class="dot dot-tienda"></span>
+        <span>Tiendas MYPEs</span>
+      </div>
+    </div>
+  </div>
+
+</section>

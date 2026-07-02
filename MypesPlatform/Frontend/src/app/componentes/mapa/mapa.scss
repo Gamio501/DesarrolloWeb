@@ -1,0 +1,185 @@
+.mapa-layout {
+  display: flex;
+  height: calc(100vh - 60px);
+  width: 100%;
+}
+
+.panel-tiendas {
+  width: 380px;
+  min-width: 380px;
+  overflow-y: auto;
+  border-right: 1px solid #ddd;
+  background: #f8f9fa;
+}
+
+.panel-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  border-bottom: 1px solid #ddd;
+  background: #fff;
+}
+
+.panel-header h2 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.panel-subtitle {
+  margin: 2px 0 0;
+  font-size: 13px;
+  color: #666;
+}
+
+.panel-icon {
+  font-size: 28px;
+}
+
+.ubicacion-card {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  font-size: 13px;
+  border-bottom: 1px solid #eee;
+}
+
+.ubicacion-ok {
+  background: #d4edda;
+  color: #155724;
+}
+
+.ubicacion-error {
+  background: #f8d7da;
+  color: #721c24;
+}
+
+.ubicacion-carga {
+  background: #fff3cd;
+  color: #856404;
+}
+
+.carga-tiendas {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 16px;
+  color: #666;
+}
+
+.spinner-sm {
+  width: 16px;
+  height: 16px;
+  border: 2px solid #ccc;
+  border-top-color: #333;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+  display: inline-block;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.lista-tiendas {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.tienda-item {
+  padding: 12px 16px;
+  border-bottom: 1px solid #eee;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.tienda-item:hover {
+  background: #e9ecef;
+}
+
+.tienda-item.activa {
+  background: #cce5ff;
+  border-left: 3px solid #007bff;
+}
+
+.tienda-nombre {
+  font-weight: 600;
+  font-size: 15px;
+  margin-bottom: 4px;
+}
+
+.tienda-dir,
+.tienda-tel {
+  font-size: 13px;
+  color: #555;
+  margin-bottom: 2px;
+}
+
+.badge-mapa {
+  display: inline-block;
+  margin-top: 4px;
+  font-size: 12px;
+  color: #007bff;
+}
+
+.badge-sin-coords {
+  display: inline-block;
+  margin-top: 4px;
+  font-size: 12px;
+  color: #999;
+  font-style: italic;
+}
+
+.mapa-container {
+  flex: 1;
+  position: relative;
+}
+
+#mapa-leaflet {
+  height: 100%;
+  width: 100%;
+}
+
+.mapa-leyenda {
+  position: absolute;
+  bottom: 24px;
+  right: 12px;
+  background: #fff;
+  padding: 8px 12px;
+  border-radius: 4px;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.2);
+  font-size: 13px;
+  z-index: 1000;
+}
+
+.leyenda-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 4px;
+}
+
+.leyenda-item:last-child {
+  margin-bottom: 0;
+}
+
+.dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.dot-usuario {
+  background: #3388ff;
+  border: 2px solid #fff;
+}
+
+.dot-tienda {
+  background: #e74c3c;
+  border: 2px solid #fff;
+}
