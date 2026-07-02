@@ -1,1 +1,12 @@
-<h1>Bienvenido al inicio</h1>
+<div>
+  <h1>WebSocket - Mensajes en tiempo real</h1>
+
+  <div>
+    <input [(ngModel)]="input" placeholder="Escribe un mensaje" />
+    <button (click)="send()">Enviar</button>
+  </div>
+
+  <ul>
+    <li *ngFor="let msg of messages">{{ msg }}</li>
+  </ul>
+</div>
