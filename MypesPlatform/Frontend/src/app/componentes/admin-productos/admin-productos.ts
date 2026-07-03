@@ -28,7 +28,6 @@ export class AdminProductos implements OnInit {
 
     this.tiendaService.obtenerProductosAdmin().subscribe({
       next: (data) => {
-        console.log('Datos traidos de la BD al recargar', data)
         this.productos = data;
       },
       error: (error: any) => console.log('Error al obtener productos', error)
@@ -37,8 +36,6 @@ export class AdminProductos implements OnInit {
   }
 
   guardarProductos() {
-
-    console.log('boton presionado')
 
     if (this.productoForm.invalid) {
       return;

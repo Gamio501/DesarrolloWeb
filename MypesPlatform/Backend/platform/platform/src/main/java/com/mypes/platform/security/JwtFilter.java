@@ -33,7 +33,6 @@ public class JwtFilter extends OncePerRequestFilter {
         
        
         String path = request.getRequestURI();
-        System.out.println("REQUEST PATH: " + request.getServletPath());
 
         if (path.startsWith("/auth/")
                 || path.startsWith("/vista/")

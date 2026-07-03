@@ -32,8 +32,6 @@ public class AuthController {
     @PostMapping("/login")
     public AuthResponse login(@RequestBody LoginRequest request) {
 
-        System.out.println("ENTRO AL LOGIN");
-
         return authService.login(request);
 
     }
