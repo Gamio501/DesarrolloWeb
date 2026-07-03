@@ -178,19 +178,16 @@ public class ProductoServiceImpl implements ProductoService {
 
     @Override
     public ProductoDTO findById(Long id) {
-        // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'findById'");
     }
 
     @Override
     public void delete(Long id) {
-        // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'delete'");
     }
 
     @Override
     public ProductoDTO update(ProductoDTO dto) {
-        // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'update'");
     }
 

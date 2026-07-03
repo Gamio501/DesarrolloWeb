@@ -88,13 +88,6 @@ public class SecurityConfig {
                 return http.build();
         }
 
-        /**
-         * Bean requerido por Spring Security 6 cuando se usa
-         * cors(Customizer.withDefaults()).
-         * Sin este bean el filtro de CORS de Security no aplica las cabeceras
-         * Access-Control-Allow-Origin en respuestas de error (4xx/5xx),
-         * lo que el navegador interpreta como un error de CORS.
-         */
         @Bean
         public CorsConfigurationSource corsConfigurationSource() {
                 CorsConfiguration config = new CorsConfiguration();

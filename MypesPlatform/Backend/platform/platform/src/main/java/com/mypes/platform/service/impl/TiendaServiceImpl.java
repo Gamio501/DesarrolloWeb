@@ -161,11 +161,9 @@ public class TiendaServiceImpl implements TiendaService{
         }
         boolean esAdmin = auth.getAuthorities().stream()
                 .anyMatch(a -> "ROLE_ADMIN".equals(a.getAuthority()));
-        // Solo los ADMIN pueden crear tiendas; si no es ADMIN, no tiene permiso
         if (!esAdmin) {
             throw new RuntimeException("Solo los dueños de tienda pueden registrar una tienda");
         }
-        // Verificar que el ADMIN autenticado sea el mismo dueño de la tienda
         Usuario actual = usuarioRepository.findByUsername(auth.getName())
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
         if (!actual.getUsuarioId().equals(usuarioIdTienda)) {

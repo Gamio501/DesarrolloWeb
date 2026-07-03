@@ -1,4 +1,3 @@
-/* Contenedor y cabecera */
 .vista-tiendas {
     max-width: 1200px;
     margin: 0 auto;
@@ -16,7 +15,6 @@
     margin-bottom: 16px;
 }
 
-/* Barra de búsqueda */
 .barra-busqueda {
     display: flex;
     justify-content: center;
@@ -39,7 +37,6 @@
     }
 }
 
-/* Chip de filtro activo */
 .filtros-activos {
     margin-bottom: 16px;
     display: flex;
@@ -72,7 +69,6 @@
     }
 }
 
-/* La Grilla */
 .grid-tiendas {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -80,7 +76,6 @@
     margin-bottom: 16px;
 }
 
-/* Las Tarjetas */
 .card-tienda {
     background-color: var(--bg-blanco, #ffffff);
     border: none;
@@ -100,7 +95,6 @@
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
 }
 
-/* Estado seleccionado */
 .card-seleccionada {
     border: 2px solid var(--color-accion, #0969da);
     box-shadow: 0 0 0 4px rgba(9, 105, 218, 0.2);
@@ -152,7 +146,6 @@
     font-weight: 600;
 }
 
-/* Contenido interno de la tarjeta */
 .card-contenido {
     padding: 24px;
     display: flex;
@@ -197,14 +190,12 @@
     }
 }
 
-/* Separador */
 .separador-seccion {
     height: 1px;
     background-color: var(--color-borde, #d0d7de);
     margin: 40px 0;
 }
 
-/* Header de sección productos con buscador */
 .productos-header {
     display: flex;
     justify-content: space-between;
@@ -219,7 +210,6 @@
     }
 }
 
-/* Sin resultados */
 .sin-resultados {
     text-align: center;
     color: var(--texto-secundario, #57606a);

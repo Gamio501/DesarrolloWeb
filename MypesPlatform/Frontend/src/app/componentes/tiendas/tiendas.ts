@@ -16,13 +16,10 @@ export class Tiendas implements OnInit {
 
   tiendas: Tienda[] = [];
 
-  // Estado de búsqueda de tiendas
   busquedaTienda: string = '';
 
-  // Estado de tienda seleccionada (null = mostrar todas)
   tiendaSeleccionada: Tienda | null = null;
 
-  // Estado de búsqueda de productos
   busquedaProducto: string = '';
 
   constructor(private tienda: TiendaService) { }
@@ -39,13 +36,11 @@ export class Tiendas implements OnInit {
   }
 
   seleccionarTienda(tienda: Tienda): void {
-    // Si ya está seleccionada, deselecciona (toggle)
     if (this.tiendaSeleccionada?.tiendaId === tienda.tiendaId) {
       this.tiendaSeleccionada = null;
     } else {
       this.tiendaSeleccionada = tienda;
     }
-    // Resetea la búsqueda de productos al cambiar de tienda
     this.busquedaProducto = '';
   }
 

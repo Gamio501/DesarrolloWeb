@@ -4,8 +4,6 @@ import { Home } from './componentes/home/home';
 import { Navbar } from './componentes/navbar/navbar';
 import { Tiendas } from './componentes/tiendas/tiendas';
 
-
-//para redenrizar un componente dentro de otro componente debemos importar el componente
 @Component({
   selector: 'app-root',
   imports: [RouterOutlet, Home, Navbar, Tiendas],

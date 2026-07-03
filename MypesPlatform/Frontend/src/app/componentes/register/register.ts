@@ -19,7 +19,6 @@ export class Register {
     username: new FormControl('', Validators.required),
     password: new FormControl('', [Validators.required, Validators.minLength(6)]),
     rol: new FormControl('CLIENTE', Validators.required),
-    // campos de tienda (solo requeridos si rol = ADMIN)
     nombreTienda: new FormControl(''),
     direccion: new FormControl(''),
     telefono: new FormControl('')
@@ -44,11 +43,9 @@ export class Register {
       rol: datos.rol!
     };
 
-    // Si es ADMIN: registro → login automático → crear tienda
     if (datos.rol === 'ADMIN') {
       this.auth.register(peticionRegistro).pipe(
         switchMap((registroResp) => {
-          // guardamos el usuarioId para usarlo al crear la tienda
           return this.auth.login({ username: datos.username!, password: datos.password! }).pipe(
             switchMap((loginResp) => {
               this.auth.guardarSesion(loginResp.token, loginResp.rol);
@@ -71,7 +68,6 @@ export class Register {
       });
 
     } else {
-      // Si es CLIENTE: solo registro, luego al login
       this.auth.register(peticionRegistro).subscribe({
         next: () => {
           this.router.navigate(['/login']);

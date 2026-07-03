@@ -3,7 +3,6 @@
     <header class="header-tiendas">
         <h1>Tiendas Disponibles</h1>
 
-        <!-- Buscador de tiendas -->
         <div class="barra-busqueda">
             <input
                 type="text"
@@ -13,7 +12,6 @@
         </div>
     </header>
 
-    <!-- Chip de filtro activo -->
     <div class="filtros-activos" *ngIf="tiendaSeleccionada">
         <span class="chip-filtro">
             Mostrando: <strong>{{ tiendaSeleccionada.nombre }}</strong>
@@ -21,7 +19,6 @@
         </span>
     </div>
 
-    <!-- Grid de tarjetas de tiendas (filtradas por búsqueda de tienda) -->
     <section class="grid-tiendas">
         <article
             class="card-tienda"
@@ -49,7 +46,6 @@
         </article>
     </section>
 
-    <!-- Mensaje si no hay tiendas -->
     <p class="sin-resultados"
        *ngIf="(tiendas | filtrar : busquedaTienda : ['nombre', 'direccion']).length === 0">
         No se encontraron tiendas con ese nombre.
@@ -57,14 +53,12 @@
 
     <div class="separador-seccion"></div>
 
-    <!-- Sección de productos -->
     <section class="seccion-productos-hijo">
         <div class="productos-header">
             <h2>
                 {{ tiendaSeleccionada ? 'Productos de ' + tiendaSeleccionada.nombre : 'Todos los Productos' }}
             </h2>
 
-            <!-- Buscador de productos por nombre -->
             <div class="barra-busqueda">
                 <input
                     type="text"

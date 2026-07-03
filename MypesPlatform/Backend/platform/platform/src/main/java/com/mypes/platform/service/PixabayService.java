@@ -35,7 +35,6 @@ public class PixabayService {
                 return response.getHits().get(0).getWebformatURL();
             }
         } catch (Exception e) {
-            // fallback
         }
         String seed = query.trim().toLowerCase().replaceAll("\\s+", "-").replaceAll("[^a-z0-9-]", "");
         if (seed.isEmpty()) seed = "producto";
