@@ -32,12 +32,15 @@
                 <img [src]="tienda.imagenUrl || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(tienda.nombre) + '&size=240&background=e8eef5&color=0056b3&bold=true'" alt="{{ tienda.nombre }}">
             </div>
 
-            <div class="card-contenido">
-                <h3>{{ tienda.nombre }}</h3>
-                <p class="descripcion">{{ tienda.direccion }}</p>
-
-                <div class="card-footer">
+            <div class="card-overlay">
+                <div class="card-header-top">
                     <span class="badge">Abierto</span>
+                </div>
+                
+                <div class="card-contenido">
+                    <h3>{{ tienda.nombre }}</h3>
+                    <p class="descripcion">{{ tienda.direccion }}</p>
+
                     <button class="btn-ver" (click)="seleccionarTienda(tienda)">
                         {{ tiendaSeleccionada?.tiendaId === tienda.tiendaId ? 'Ocultar' : 'Ver Productos' }}
                     </button>
