@@ -1,0 +1,191 @@
+/* Contenedor y cabecera */
+.vista-tiendas {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 40px 20px;
+}
+
+.header-tiendas {
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+.header-tiendas h1 {
+    font-size: 2.2rem;
+    color: var(--texto-principal, #24292f);
+    margin-bottom: 16px;
+}
+
+/* Barra de búsqueda */
+.barra-busqueda {
+    display: flex;
+    justify-content: center;
+}
+
+.input-busqueda {
+    width: 100%;
+    max-width: 480px;
+    padding: 9px 14px;
+    border: 1px solid var(--color-borde, #d0d7de);
+    border-radius: 6px;
+    font-size: 0.95rem;
+    background-color: var(--bg-blanco, #ffffff);
+    color: var(--texto-principal, #24292f);
+    transition: border-color 0.2s;
+
+    &:focus {
+        outline: none;
+        border-color: var(--color-accion, #0969da);
+    }
+}
+
+/* Chip de filtro activo */
+.filtros-activos {
+    margin-bottom: 16px;
+    display: flex;
+    gap: 8px;
+}
+
+.chip-filtro {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background-color: #ddf4ff;
+    border: 1px solid #54aeff;
+    color: #0550ae;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.85rem;
+}
+
+.chip-cerrar {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #0550ae;
+    font-size: 0.9rem;
+    padding: 0;
+    line-height: 1;
+
+    &:hover {
+        color: #033d8b;
+    }
+}
+
+/* La Grilla */
+.grid-tiendas {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 24px;
+    margin-bottom: 16px;
+}
+
+/* Las Tarjetas */
+.card-tienda {
+    background-color: var(--bg-blanco, #ffffff);
+    border: 1px solid var(--color-borde, #d0d7de);
+    border-radius: 8px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+    cursor: pointer;
+}
+
+.card-tienda:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+/* Estado seleccionado */
+.card-seleccionada {
+    border-color: var(--color-accion, #0969da);
+    box-shadow: 0 0 0 2px rgba(9, 105, 218, 0.2);
+}
+
+.card-imagen {
+    height: 160px;
+    background-color: #e1e4e8;
+}
+
+/* Contenido interno de la tarjeta */
+.card-contenido {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.card-contenido h3 {
+    font-size: 1.25rem;
+    color: var(--texto-principal, #24292f);
+    margin-bottom: 8px;
+}
+
+.card-contenido .descripcion {
+    color: var(--texto-secundario, #57606a);
+    font-size: 0.9rem;
+    margin-bottom: 20px;
+    flex-grow: 1;
+}
+
+/* El pie de la tarjeta */
+.card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.badge {
+    background-color: #dafbe1;
+    color: #1a7f37;
+    padding: 4px 8px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.btn-ver {
+    background-color: var(--bg-primary, #f6f8fa);
+    border: 1px solid var(--color-borde, #d0d7de);
+    color: var(--texto-principal, #24292f);
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s;
+
+    &:hover {
+        background-color: var(--color-borde, #d0d7de);
+    }
+}
+
+/* Separador */
+.separador-seccion {
+    height: 1px;
+    background-color: var(--color-borde, #d0d7de);
+    margin: 40px 0;
+}
+
+/* Header de sección productos con buscador */
+.productos-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 20px;
+
+    h2 {
+        font-size: 1.6rem;
+        color: var(--texto-principal, #24292f);
+    }
+}
+
+/* Sin resultados */
+.sin-resultados {
+    text-align: center;
+    color: var(--texto-secundario, #57606a);
+    padding: 24px;
+    font-size: 0.95rem;
+}

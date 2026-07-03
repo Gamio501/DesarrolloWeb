@@ -1,0 +1,22 @@
+<nav class="navbar">
+
+    <div class="navbar-brand">
+        <a routerLink="/tiendas">MypesPlatform</a>
+    </div>
+
+    <ul class="navbar-menu">
+        <li><a routerLink="/tiendas" routerLinkActive="activo">Tiendas</a></li>
+        <li *ngIf="auth.esCliente()"><a routerLink="/mapa" routerLinkActive="activo">Mapa</a></li>
+        <li *ngIf="auth.esAdmin()">
+            <a routerLink="/mi-tienda" routerLinkActive="activo">Mi Tienda</a>
+        </li>
+        <li class="auth-buttons">
+            <a *ngIf="!auth.estaLogueado()" routerLink="/login" class="btn-secundario">Iniciar sesión</a>
+
+
+            <a *ngIf="!auth.estaLogueado()" routerLink="/register" class="btn-primario">Registrarse</a>
+
+            <a *ngIf="auth.estaLogueado()" routerLink="/tiendas" (click)="cerrarSesion()">Cerrar sesión</a>
+
+        </li>
+    </ul>

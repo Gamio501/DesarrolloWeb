@@ -1,0 +1,36 @@
+<div class="vista-mi-tienda">
+
+    <div class="tienda-header" *ngIf="tienda">
+        <div class="tienda-info">
+            <h1>{{ tienda.nombre }}</h1>
+            <div class="tienda-meta">
+                <p><strong>Dirección:</strong> {{ tienda.direccion }}</p>
+                <p><strong>Teléfono:</strong> {{ tienda.telefono }}</p>
+            </div>
+        </div>
+        <span class="badge-activo">Activa</span>
+    </div>
+
+    <section class="mapa-mi-tienda" *ngIf="tienda?.latitud && tienda?.longitud">
+        <h2>Ubicación de tu tienda</h2>
+        <app-mapa [tiendaUnica]="tienda" contenedorId="mapa-mi-tienda"></app-mapa>
+    </section>
+
+    <section class="tienda-imagen" *ngIf="tienda">
+        <h2>Imagen de la Tienda</h2>
+        <div class="imagen-preview">
+            <img *ngIf="tienda.imagenUrl" [src]="tienda.imagenUrl" alt="Imagen de la tienda" width="400">
+            <p *ngIf="!tienda.imagenUrl" class="sin-imagen">Sin imagen asignada</p>
+        </div>
+        <button class="btn-generar-imagen" (click)="generarImagenTienda()" [disabled]="generando">
+            {{ generando ? 'Generando...' : 'Generar imagen de tienda' }}
+        </button>
+    </section>
+
+    <p class="sin-coords" *ngIf="tienda && (!tienda.latitud || !tienda.longitud)">
+        Tu tienda aún no tiene coordenadas registradas en el mapa.
+    </p>
+
+    <app-admin-productos></app-admin-productos>
+
+</div>

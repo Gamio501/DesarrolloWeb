@@ -1,0 +1,80 @@
+<main class="vista-tiendas">
+
+    <header class="header-tiendas">
+        <h1>Tiendas Disponibles</h1>
+
+        <!-- Buscador de tiendas -->
+        <div class="barra-busqueda">
+            <input
+                type="text"
+                [(ngModel)]="busquedaTienda"
+                placeholder="Buscar tienda por nombre o dirección..."
+                class="input-busqueda">
+        </div>
+    </header>
+
+    <!-- Chip de filtro activo -->
+    <div class="filtros-activos" *ngIf="tiendaSeleccionada">
+        <span class="chip-filtro">
+            Mostrando: <strong>{{ tiendaSeleccionada.nombre }}</strong>
+            <button class="chip-cerrar" (click)="limpiarFiltros()">✕</button>
+        </span>
+    </div>
+
+    <!-- Grid de tarjetas de tiendas (filtradas por búsqueda de tienda) -->
+    <section class="grid-tiendas">
+        <article
+            class="card-tienda"
+            [class.card-seleccionada]="tiendaSeleccionada?.tiendaId === tienda.tiendaId"
+            *ngFor="let tienda of tiendas | filtrar : busquedaTienda : ['nombre', 'direccion']">
+
+            <div class="card-imagen">
+                <img [src]="tienda.imagenUrl || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(tienda.nombre) + '&size=240&background=e8eef5&color=0056b3&bold=true'" alt="{{ tienda.nombre }}">
+            </div>
+
+            <div class="card-contenido">
+                <h3>{{ tienda.nombre }}</h3>
+                <p class="descripcion">{{ tienda.direccion }}</p>
+
+                <div class="card-footer">
+                    <span class="badge">Abierto</span>
+                    <button class="btn-ver" (click)="seleccionarTienda(tienda)">
+                        {{ tiendaSeleccionada?.tiendaId === tienda.tiendaId ? 'Ocultar' : 'Ver Productos' }}
+                    </button>
+                </div>
+            </div>
+        </article>
+    </section>
+
+    <!-- Mensaje si no hay tiendas -->
+    <p class="sin-resultados"
+       *ngIf="(tiendas | filtrar : busquedaTienda : ['nombre', 'direccion']).length === 0">
+        No se encontraron tiendas con ese nombre.
+    </p>
+
+    <div class="separador-seccion"></div>
+
+    <!-- Sección de productos -->
+    <section class="seccion-productos-hijo">
+        <div class="productos-header">
+            <h2>
+                {{ tiendaSeleccionada ? 'Productos de ' + tiendaSeleccionada.nombre : 'Todos los Productos' }}
+            </h2>
+
+            <!-- Buscador de productos por nombre -->
+            <div class="barra-busqueda">
+                <input
+                    type="text"
+                    [(ngModel)]="busquedaProducto"
+                    placeholder="Buscar producto por nombre..."
+                    class="input-busqueda">
+            </div>
+        </div>
+
+        <app-tiendas-productos
+            [tiendaId]="tiendaIdSeleccionada"
+            [busqueda]="busquedaProducto">
+        </app-tiendas-productos>
+    </section>
+
+</main>
