@@ -1,0 +1,25 @@
+<div class="vista-login">
+    <div class="form-card">
+        <h1>Iniciar Sesión</h1>
+
+        <form [formGroup]="loginForm" (ngSubmit)="iniciarSesion()">
+
+            <div class="form-group">
+                <label>Usuario</label>
+                <input type="text" formControlName="username" placeholder="Nombre de usuario">
+            </div>
+
+            <div class="form-group">
+                <label>Contraseña</label>
+                <input type="password" formControlName="password" placeholder="Tu contraseña">
+            </div>
+
+            <button type="submit" class="btn-primario" [disabled]="loginForm.invalid">Ingresar</button>
+
+        </form>
+
+        <p class="form-footer">
+            ¿No tienes cuenta? <a routerLink="/register">Regístrate aquí</a>
+        </p>
+    </div>
+</div>

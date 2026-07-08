@@ -1,0 +1,50 @@
+<div class="vista-register">
+    <div class="form-card">
+        <h1>Crear cuenta</h1>
+
+        <form [formGroup]="registerForm" (ngSubmit)="enviarDatos()">
+
+            <div class="form-group">
+                <label>Usuario</label>
+                <input type="text" formControlName="username" placeholder="Nombre de usuario">
+            </div>
+
+            <div class="form-group">
+                <label>Contraseña</label>
+                <input type="password" formControlName="password" placeholder="Mínimo 6 caracteres">
+            </div>
+
+            <div class="form-group">
+                <label>Tipo de cuenta</label>
+                <select formControlName="rol">
+                    <option value="CLIENTE">Usuario (comprar)</option>
+                    <option value="ADMIN">Tienda (propietario)</option>
+                </select>
+            </div>
+
+            <div class="seccion-tienda" *ngIf="rolSeleccionado === 'ADMIN'">
+                <p class="seccion-titulo">Datos de tu tienda</p>
+
+                <div class="form-group">
+                    <label>Nombre de la tienda</label>
+                    <input type="text" formControlName="nombreTienda" placeholder="Ej: Mi Bodega">
+                </div>
+                <div class="form-group">
+                    <label>Dirección</label>
+                    <input type="text" formControlName="direccion" placeholder="Av. Principal 123">
+                </div>
+                <div class="form-group">
+                    <label>Teléfono</label>
+                    <input type="text" formControlName="telefono" placeholder="999 999 999">
+                </div>
+            </div>
+
+            <button type="submit" class="btn-primario" [disabled]="registerForm.invalid">Registrarse</button>
+
+        </form>
+
+        <p class="form-footer">
+            ¿Ya tienes cuenta? <a routerLink="/login">Iniciar sesión</a>
+        </p>
+    </div>
+</div>
