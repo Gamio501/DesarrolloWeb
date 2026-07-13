@@ -51,5 +51,11 @@ export class TiendaService {
     return this.http.put(`${this.baseUrl}/api/tienda/${id}/imagen`, { imagenUrl });
   }
 
+  buscarProductos(q: string): Observable<Producto[]> {
+    const params = { q: q.trim() };
+    return this.http.get<Producto[]>(`${this.baseUrl}/productos/buscar`, { params });
+  }
+
 }
+
 

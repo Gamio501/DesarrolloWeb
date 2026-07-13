@@ -5,6 +5,7 @@ import { Formlogin } from './componentes/formlogin/formlogin';
 import { Tiendas } from './componentes/tiendas/tiendas';
 import { MiTienda } from './componentes/mi-tienda/mi-tienda';
 import { Mapa } from './componentes/mapa/mapa';
+import { VoiceSearchComponent } from './componentes/voice-search/voice-search.component';
 import { guestGuardGuard } from './guards/guest-guard-guard';
 import { clienteGuard } from './guards/cliente-guard';
 import { adminGuard } from './guards/admin-guard';
@@ -23,6 +24,10 @@ export const routes: Routes = [
         path: 'mapa',
         component: Mapa,
         canActivate: [clienteGuard]
+    },
+    {
+        path: 'buscar',
+        component: VoiceSearchComponent
     },
     {
         path: 'register',

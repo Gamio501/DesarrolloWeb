@@ -5,10 +5,11 @@ import { FormsModule } from '@angular/forms';
 import { Tienda } from '../../modelos/tienda';
 import { TiendasProductos } from '../tiendas-productos/tiendas-productos';
 import { FiltrarPipe } from '../../pipes/filtrar.pipe';
+import { MicButtonComponent } from '../mic-button/mic-button.component';
 
 @Component({
   selector: 'app-tiendas',
-  imports: [NgFor, NgIf, FormsModule, TiendasProductos, FiltrarPipe],
+  imports: [NgFor, NgIf, FormsModule, TiendasProductos, FiltrarPipe, MicButtonComponent],
   templateUrl: './tiendas.html',
   styleUrl: './tiendas.scss',
 })
@@ -56,6 +57,11 @@ export class Tiendas implements OnInit {
 
   encodeURIComponent(value: string): string {
     return encodeURIComponent(value);
+  }
+
+  /** Recibe el texto reconocido por voz y lo aplica al buscador de productos */
+  recibirTextoVoz(texto: string): void {
+    this.busquedaProducto = texto;
   }
 
 }

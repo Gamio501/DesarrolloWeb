@@ -11,7 +11,8 @@ import com.mypes.platform.entity.Producto;
 public interface ProductoRepository extends JpaRepository<Producto, Long> {
 
 
-   List <Producto> findByNombreContaining(String nombre);
+   @Query("SELECT p FROM Producto p JOIN FETCH p.tienda LEFT JOIN FETCH p.usuario WHERE LOWER(p.nombre) LIKE LOWER(CONCAT('%', :nombre, '%'))")
+   List<Producto> buscarPorNombre(@Param("nombre") String nombre);
    
    @Override
    @Query("SELECT p FROM Producto p JOIN FETCH p.tienda LEFT JOIN FETCH p.usuario")

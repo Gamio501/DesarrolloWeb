@@ -1,0 +1,47 @@
+<button
+  id="btn-mic-voz"
+  class="mic-btn"
+  [class.mic-btn--listening]="isListening"
+  [class.mic-btn--error]="isError"
+  [title]="tooltip()"
+  [attr.aria-label]="tooltip()"
+  (click)="toggle()"
+  type="button">
+
+  <!-- Anillos de pulso (solo visibles al escuchar) -->
+  <span class="mic-ring mic-ring--1"></span>
+  <span class="mic-ring mic-ring--2"></span>
+
+  <!-- Icono: micrófono normal -->
+  <svg *ngIf="!isListening && !isError"
+       xmlns="http://www.w3.org/2000/svg"
+       viewBox="0 0 24 24"
+       fill="currentColor"
+       width="18" height="18"
+       aria-hidden="true">
+    <path d="M12 1a4 4 0 0 1 4 4v7a4 4 0 0 1-8 0V5a4 4 0 0 1 4-4zm-6.5 11a6.5 6.5 0 0 0 13 0H20a8 8 0 0 1-7 7.93V22h-2v-2.07A8 8 0 0 1 4 12h1.5z"/>
+  </svg>
+
+  <!-- Icono: stop (cuadrado) cuando escucha -->
+  <svg *ngIf="isListening"
+       xmlns="http://www.w3.org/2000/svg"
+       viewBox="0 0 24 24"
+       fill="currentColor"
+       width="18" height="18"
+       aria-hidden="true">
+    <rect x="5" y="5" width="14" height="14" rx="2"/>
+  </svg>
+
+  <!-- Icono: advertencia cuando hay error -->
+  <svg *ngIf="isError"
+       xmlns="http://www.w3.org/2000/svg"
+       viewBox="0 0 24 24"
+       fill="currentColor"
+       width="18" height="18"
+       aria-hidden="true">
+    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+  </svg>
+</button>
+
+<!-- Tooltip de estado de error visible bajo el botón -->
+<span class="mic-error-label" *ngIf="isError">{{ tooltip() }}</span>

@@ -59,12 +59,17 @@
                 {{ tiendaSeleccionada ? 'Productos de ' + tiendaSeleccionada.nombre : 'Todos los Productos' }}
             </h2>
 
-            <div class="barra-busqueda">
+            <div class="barra-busqueda barra-busqueda--con-mic">
                 <input
+                    id="input-busqueda-producto"
                     type="text"
                     [(ngModel)]="busquedaProducto"
                     placeholder="Buscar producto por nombre..."
-                    class="input-busqueda">
+                    class="input-busqueda"
+                    autocomplete="off">
+                <app-mic-button
+                    (voiceText)="recibirTextoVoz($event)">
+                </app-mic-button>
             </div>
         </div>
 

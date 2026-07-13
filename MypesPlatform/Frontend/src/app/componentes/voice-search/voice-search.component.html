@@ -1,0 +1,167 @@
+<section class="vs-page" id="voice-search-page">
+
+  <!-- ══ HERO ════════════════════════════════════════════════════ -->
+  <div class="vs-hero">
+    <div class="vs-hero__glow"></div>
+
+    <h1 class="vs-hero__title">
+      <span class="vs-hero__title-icon">🔍</span>
+      Motor de Búsqueda
+    </h1>
+    <p class="vs-hero__subtitle">
+      Dicta o escribe para encontrar productos al instante
+    </p>
+
+    <!-- ── Botón micrófono ─────────────────────────────────── -->
+    <div class="vs-mic-wrapper">
+      <button
+        id="btn-mic"
+        class="vs-mic"
+        [class.vs-mic--listening]="isListening"
+        [class.vs-mic--processing]="isProcessing"
+        [class.vs-mic--disabled]="!isSupported"
+        (click)="toggleListening()"
+        [attr.aria-label]="isListening ? 'Detener escucha' : 'Iniciar búsqueda por voz'"
+        [disabled]="!isSupported || isProcessing">
+
+        <!-- Anillos de onda animados -->
+        <span class="vs-mic__ring vs-mic__ring--1"></span>
+        <span class="vs-mic__ring vs-mic__ring--2"></span>
+        <span class="vs-mic__ring vs-mic__ring--3"></span>
+
+        <!-- Icono -->
+        <span class="vs-mic__icon">
+          @if (isListening) {
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="32" height="32">
+              <rect x="6" y="4" width="4" height="16" rx="1"/>
+              <rect x="14" y="4" width="4" height="16" rx="1"/>
+            </svg>
+          } @else if (isProcessing) {
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="32" height="32" class="spin">
+              <path d="M12 2a10 10 0 0 1 10 10h-2a8 8 0 0 0-8-8V2z"/>
+            </svg>
+          } @else {
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="32" height="32">
+              <path d="M12 1a4 4 0 0 1 4 4v7a4 4 0 0 1-8 0V5a4 4 0 0 1 4-4zm-7 11a7 7 0 0 0 14 0h2a9 9 0 0 1-8 8.94V23h-2v-2.06A9 9 0 0 1 3 12h2z"/>
+            </svg>
+          }
+        </span>
+      </button>
+
+      <!-- Estado etiqueta -->
+      <div class="vs-mic__label">
+        @if (isListening) {
+          <span class="vs-mic__label--active">
+            <span class="vs-mic__dot"></span> Escuchando...
+          </span>
+        } @else if (isProcessing) {
+          <span class="vs-mic__label--processing">Buscando...</span>
+        } @else {
+          <span class="vs-mic__label--idle">Toca el micrófono</span>
+        }
+      </div>
+    </div>
+
+    <!-- ── Transcripción en tiempo real ───────────────────────── -->
+    @if (transcript) {
+      <div class="vs-transcript" id="transcript-box">
+        <span class="vs-transcript__label">Escuché:</span>
+        <span class="vs-transcript__text">"{{ transcript }}"</span>
+      </div>
+    }
+
+    <!-- ── Búsqueda por texto ──────────────────────────────────── -->
+    <div class="vs-search-bar">
+      <input
+        id="txt-search"
+        type="text"
+        class="vs-search-bar__input"
+        [(ngModel)]="textQuery"
+        (keyup)="onTextKeyUp()"
+        (keyup.enter)="onTextSearch()"
+        placeholder="O escribe aquí lo que buscas..."
+        autocomplete="off"
+        spellcheck="false" />
+      <button
+        id="btn-text-search"
+        class="vs-search-bar__btn"
+        (click)="onTextSearch()"
+        [disabled]="!textQuery.trim()">
+        Buscar
+      </button>
+    </div>
+
+    <!-- ── Error ──────────────────────────────────────────────── -->
+    @if (hasError && errorMessage) {
+      <div class="vs-alert vs-alert--error" role="alert" id="error-msg">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+        </svg>
+        {{ errorMessage }}
+      </div>
+    }
+  </div>
+
+  <!-- ══ RESULTADOS ═══════════════════════════════════════════════ -->
+  <div class="vs-results-section">
+
+    <!-- Sin resultados -->
+    @if (hasNoResults) {
+      <div class="vs-empty" id="no-results-msg">
+        <div class="vs-empty__icon">🔎</div>
+        <h3 class="vs-empty__title">Sin resultados</h3>
+        <p class="vs-empty__text">
+          No encontramos productos para <strong>"{{ textQuery }}"</strong>.
+          Intenta con otra palabra.
+        </p>
+        <button class="vs-btn-secondary" (click)="limpiar()">Limpiar búsqueda</button>
+      </div>
+    }
+
+    <!-- Grid de resultados -->
+    @if (hasResults) {
+      <div class="vs-results-header">
+        <h2 class="vs-results-header__title">
+          Resultados para
+          <span class="vs-results-header__query">"{{ textQuery }}"</span>
+        </h2>
+        <span class="vs-results-header__count">{{ resultados.length }} producto(s)</span>
+        <button class="vs-btn-ghost" (click)="limpiar()">✕ Limpiar</button>
+      </div>
+
+      <div class="vs-grid" id="results-grid">
+        @for (producto of resultados; track producto.productoId) {
+          <article class="vs-card" [id]="'product-' + producto.productoId">
+
+            <!-- Imagen -->
+            <div class="vs-card__img-wrapper">
+              @if (producto.imagenUrl) {
+                <img
+                  [src]="producto.imagenUrl"
+                  [alt]="producto.nombre"
+                  class="vs-card__img"
+                  loading="lazy" />
+              } @else {
+                <div class="vs-card__img-placeholder">
+                  <span>🛍️</span>
+                </div>
+              }
+              <div class="vs-card__stock-badge"
+                   [class.vs-card__stock-badge--low]="producto.stock !== undefined && producto.stock < 5">
+                Stock: {{ producto.stock }}
+              </div>
+            </div>
+
+            <!-- Info -->
+            <div class="vs-card__body">
+              <h3 class="vs-card__name">{{ producto.nombre }}</h3>
+              <p class="vs-card__price">{{ formatPrecio(producto.precio) }}</p>
+            </div>
+          </article>
+        }
+      </div>
+    }
+
+  </div>
+
+</section>

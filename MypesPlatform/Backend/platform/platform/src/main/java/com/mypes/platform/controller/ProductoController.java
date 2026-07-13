@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.mypes.platform.dto.ProductoDTO;
@@ -60,6 +61,12 @@ public class ProductoController {
     @GetMapping("/listar")
     public List<ProductoDTO> listarProductos() {
         return productoService.findAll();
+    }
+
+    @GetMapping("/buscar")
+    public ResponseEntity<List<ProductoDTO>> buscarProductos(@RequestParam(value = "q", defaultValue = "") String q) {
+        List<ProductoDTO> resultados = productoService.buscarPorNombre(q);
+        return ResponseEntity.ok(resultados);
     }
 
     @PutMapping("/{id}/imagen")

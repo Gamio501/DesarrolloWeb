@@ -178,4 +178,27 @@ public class ProductoServiceImpl implements ProductoService {
         throw new UnsupportedOperationException("Unimplemented method 'update'");
     }
 
+    @Override
+    public List<ProductoDTO> buscarPorNombre(String q) {
+        if (q == null || q.trim().isEmpty()) {
+            return new ArrayList<>();
+        }
+        List<Producto> listaProductos = productoRepository.buscarPorNombre(q.trim());
+        List<ProductoDTO> respuesta = new ArrayList<>();
+        for (Producto producto : listaProductos) {
+            respuesta.add(ProductoDTO.builder()
+                    .productoId(producto.getProductoId())
+                    .tiendaId(producto.getTienda().getTiendaId())
+                    .usuarioId(producto.getUsuario() != null ? producto.getUsuario().getUsuarioId() : null)
+                    .nombre(producto.getNombre())
+                    .precio(producto.getPrecio())
+                    .stock(producto.getStock())
+                    .imagenUrl(completarUrl(producto.getImagenUrl()))
+                    .build());
+        }
+        return respuesta;
+    }
+
+
+
 }

@@ -21,6 +21,10 @@ public interface ProductoService {
 
     ProductoDTO update(ProductoDTO dto);
 
+    List<ProductoDTO> buscarPorNombre(String q);
+
+
+
     
 
 

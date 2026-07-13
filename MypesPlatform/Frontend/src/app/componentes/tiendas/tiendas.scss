@@ -20,6 +20,19 @@
     justify-content: center;
 }
 
+// Variante con botón de micrófono integrado
+.barra-busqueda--con-mic {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 8px;
+
+    .input-busqueda {
+        flex: 1;
+        max-width: 100%;
+    }
+}
+
 .input-busqueda {
     width: 100%;
     max-width: 480px;

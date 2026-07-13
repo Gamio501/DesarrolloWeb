@@ -43,6 +43,7 @@ public class SecurityConfig {
                                                                 "/auth/register",
                                                                 "/api/tienda/listar",
                                                                 "/productos/listar",
+                                                                "/productos/buscar",
                                                                 "/api/imagen/**",
                                                                 "/uploads/**",
                                                                 "/vista/**",
