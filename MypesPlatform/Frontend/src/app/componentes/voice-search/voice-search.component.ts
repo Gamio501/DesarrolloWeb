@@ -40,6 +40,9 @@ export class VoiceSearchComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.initializeSpeechRecognition();
     this.setupSearchPipeline();
+    if (this.isSupported) {
+      setTimeout(() => this.startListening(), 400);
+    }
   }
 
   ngOnDestroy(): void {

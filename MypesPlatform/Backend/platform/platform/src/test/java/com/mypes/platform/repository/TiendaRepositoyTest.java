@@ -22,7 +22,7 @@ public class TiendaRepositoyTest {
     void saveTienda() {
 
         Usuario usuario = Usuario.builder()
-        .username("Martin")
+        .username("Martin_" + System.currentTimeMillis())
         .password("Martin123")
         .rol(Rol.ADMIN)
         .build();
@@ -30,9 +30,9 @@ public class TiendaRepositoyTest {
         usuarioRepository.save(usuario);
 
         Tienda tienda = Tienda.builder()
-                .nombre("Tienda el pollito")
-                .direccion("Tumbes")
-                .telefono("92929929")
+                .nombre("Tienda el pollito " + System.currentTimeMillis())
+                .direccion("Tumbes " + System.currentTimeMillis())
+                .telefono(String.valueOf(System.currentTimeMillis()).substring(3))
                 .usuario(usuario)
                 .build();
 

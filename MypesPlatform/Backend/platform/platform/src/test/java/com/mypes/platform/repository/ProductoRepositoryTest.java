@@ -33,13 +33,13 @@ public class ProductoRepositoryTest {
 
     @Test
     void testFindByNombre() {
-        List <Producto> productolista = productoRepository.findByNombreContaining("Pepsi");
+        List <Producto> productolista = productoRepository.buscarPorNombre("Pepsi");
         System.out.println("producto"+productolista);
 
     }
     @Test
     void testgetPrecioByNombre(){
-        double precio = productoRepository.getPrecioByNombre("chetos");
+        Double precio = productoRepository.getPrecioByNombre("Arroz Extra");
         System.out.println("Precio"+precio);
     }
 }

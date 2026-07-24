@@ -18,7 +18,7 @@ public class UsuarioRepositoryTest {
     @Test
     public void saveUsuario() {
         Usuario usuario = Usuario.builder()
-                .username("estefano")
+                .username("estefano_" + System.currentTimeMillis())
                 .password("4321")
                 .rol(Rol.ADMIN)
                 .build();
@@ -47,7 +47,7 @@ public class UsuarioRepositoryTest {
 
     @Test
     public void findByUsername(){
-        Usuario usuario = usuarioRepository.findByUsername("ian").get();
+        Usuario usuario = usuarioRepository.findByUsername("admin1").get();
 
         System.out.println("usuario"+usuario);
 

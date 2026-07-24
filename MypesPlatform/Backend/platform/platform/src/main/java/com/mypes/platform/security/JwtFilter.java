@@ -38,7 +38,12 @@ public class JwtFilter extends OncePerRequestFilter {
         if (path.startsWith("/auth/")
                 || path.startsWith("/vista/")
                 || path.startsWith("/css/")
-                || path.startsWith("/js/")) {
+                || path.startsWith("/js/")
+                || path.startsWith("/api/tienda/listar")
+                || path.startsWith("/productos/listar")
+                || path.startsWith("/productos/buscar")
+                || path.startsWith("/api/imagen")
+                || path.startsWith("/uploads/")) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -46,15 +51,21 @@ public class JwtFilter extends OncePerRequestFilter {
         final String authHeader = request.getHeader("Authorization");
 
         String username = null;
-
         String token = null;
 
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
-
             token = authHeader.substring(7);
-
-            username = jwtUtil.extractUsername(token);
-
+            try {
+                username = jwtUtil.extractUsername(token);
+            } catch (io.jsonwebtoken.ExpiredJwtException e) {
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.getWriter().write("{\"error\": \"Token expired\"}");
+                return;
+            } catch (Exception e) {
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.getWriter().write("{\"error\": \"Invalid token\"}");
+                return;
+            }
         }
 
         if (username != null &&
