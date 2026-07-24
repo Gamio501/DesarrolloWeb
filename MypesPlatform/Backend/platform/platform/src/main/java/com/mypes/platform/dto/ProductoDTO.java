@@ -22,5 +22,6 @@ public class ProductoDTO {
     private Long tiendaId;
     private Long usuarioId;
     private String imagenUrl;
-
+    private String tiendaNombre;
+    private Double tiendaPromedioValoracion;
 }

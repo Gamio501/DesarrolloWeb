@@ -5,6 +5,15 @@ import { GeolocalizacionService, CoordenadaUsuario } from '../../servicios/geolo
 import { Tienda } from '../../modelos/tienda';
 import * as L from 'leaflet';
 
+// Leaflet no puede autodetectar la ruta de sus propios íconos cuando el CSS
+// está bundleado (Angular/esbuild) — sin esto, los markers salen rotos (404).
+delete (L.Icon.Default.prototype as any)._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: '/leaflet/marker-icon-2x.png',
+  iconUrl: '/leaflet/marker-icon.png',
+  shadowUrl: '/leaflet/marker-shadow.png',
+});
+
 @Component({
   selector: 'app-mapa',
   imports: [CommonModule],
@@ -16,15 +25,21 @@ export class Mapa implements OnInit, AfterViewInit {
   @Input() contenedorId = 'mapa-leaflet';
 
   tiendas: Tienda[] = [];
+  tiendasVista: (Tienda & { distanciaKm: number | null })[] = [];
   tiendaSeleccionada: Tienda | null = null;
   estadoUbicacion: 'cargando' | 'ok' | 'error' = 'cargando';
   errorUbicacion = '';
   cargandoTiendas = true;
 
+  private posicionUsuario: CoordenadaUsuario | null = null;
   private map: L.Map | null = null;
   private marcadorUsuario: L.CircleMarker | null = null;
   private marcadoresTiendas: Map<number, L.Marker> = new Map();
   private readonly CENTRO_DEFAULT: [number, number] = [-12.0464, -77.0428];
+  private readonly LIMITES_PERU = L.latLngBounds(
+    L.latLng(-18.5, -81.5),
+    L.latLng(0.5, -68.0)
+  );
 
   constructor(
     private tiendaService: TiendaService,
@@ -57,7 +72,11 @@ export class Mapa implements OnInit, AfterViewInit {
       : this.CENTRO_DEFAULT;
     const zoom = this.tiendaUnica ? 16 : 13;
 
-    this.map = L.map(this.contenedorId).setView(centro, zoom);
+    this.map = L.map(this.contenedorId, {
+      maxBounds: this.LIMITES_PERU,
+      maxBoundsViscosity: 1.0,
+      minZoom: 5,
+    }).setView(centro, zoom);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; OpenStreetMap contributors',
@@ -74,6 +93,7 @@ export class Mapa implements OnInit, AfterViewInit {
         this.tiendas = data;
         this.cargandoTiendas = false;
         this.agregarMarcadoresTiendas();
+        this.actualizarVistaOrdenada();
       },
       error: () => {
         this.cargandoTiendas = false;
@@ -86,13 +106,56 @@ export class Mapa implements OnInit, AfterViewInit {
     this.geoService.obtenerPosicion().subscribe({
       next: (coord: CoordenadaUsuario) => {
         this.estadoUbicacion = 'ok';
+        this.posicionUsuario = coord;
         this.actualizarMapaUsuario(coord);
+        this.actualizarVistaOrdenada();
       },
       error: (msg: string) => {
         this.estadoUbicacion = 'error';
         this.errorUbicacion = msg;
       },
     });
+  }
+
+  /** Ordena las tiendas por cercanía a la posición del usuario (Haversine). Sin ubicación, deja el orden tal cual. */
+  private actualizarVistaOrdenada(): void {
+    const conDistancia = this.tiendas.map((tienda) => {
+      const distanciaKm = this.posicionUsuario && tienda.latitud != null && tienda.longitud != null
+        ? this.calcularDistanciaKm(
+            this.posicionUsuario.latitud,
+            this.posicionUsuario.longitud,
+            tienda.latitud,
+            tienda.longitud
+          )
+        : null;
+      return { ...tienda, distanciaKm };
+    });
+
+    conDistancia.sort((a, b) => {
+      if (a.distanciaKm == null && b.distanciaKm == null) return 0;
+      if (a.distanciaKm == null) return 1;
+      if (b.distanciaKm == null) return -1;
+      return a.distanciaKm - b.distanciaKm;
+    });
+
+    this.tiendasVista = conDistancia;
+  }
+
+  private calcularDistanciaKm(lat1: number, lon1: number, lat2: number, lon2: number): number {
+    const R = 6371;
+    const dLat = this.gradosARadianes(lat2 - lat1);
+    const dLon = this.gradosARadianes(lon2 - lon1);
+    const a =
+      Math.sin(dLat / 2) ** 2 +
+      Math.cos(this.gradosARadianes(lat1)) *
+        Math.cos(this.gradosARadianes(lat2)) *
+        Math.sin(dLon / 2) ** 2;
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return R * c;
+  }
+
+  private gradosARadianes(grados: number): number {
+    return (grados * Math.PI) / 180;
   }
 
   private actualizarMapaUsuario(coord: CoordenadaUsuario): void {
@@ -127,7 +190,7 @@ export class Mapa implements OnInit, AfterViewInit {
 
       const marker = L.marker(latLng).addTo(this.map!);
       marker.bindPopup(
-        `<b>${tienda.nombre}</b><br>📍 ${tienda.direccion}<br>📞 ${tienda.telefono}`
+        `<b>${tienda.nombre}</b><br>${tienda.direccion}<br>${tienda.telefono}`
       );
       marker.on('click', () => {
         this.tiendaSeleccionada = tienda;

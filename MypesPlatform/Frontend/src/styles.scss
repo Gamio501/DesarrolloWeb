@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap');
+
 * {
     margin: 0;
     padding: 0;
@@ -5,23 +7,33 @@
 }
 
 :root {
-    --bg-primary: #f6f8fa;
+    // Curated warm-neutral and indigo color system (non-IA defaults)
+    --bg-primary: #faf9f6; // Soft warm off-white
     --bg-blanco: #ffffff;
-
-
-
-    --texto-principal: #24292f;
-    --texto-secundario: #57606a;
-    --color-borde: #d0d7de;
-
-    --color-accion: #0969da;
-    --color-accion-hover: #0353a4;
-
+    --texto-principal: #18181b; // Zinc 900
+    --texto-secundario: #52525b; // Zinc 600
+    --color-borde: #e4e4e7; // Zinc 200
+    --color-borde-hover: #a1a1aa; // Zinc 400
+    
+    --color-accion: #4f46e5; // Elegant Indigo
+    --color-accion-hover: #4338ca;
+    
+    --font-display: 'Outfit', sans-serif;
+    --font-body: 'Inter', sans-serif;
+    
+    --radius-sm: 6px;
+    --radius-md: 12px;
+    --radius-lg: 18px;
+    --radius-full: 9999px;
+    
+    --shadow-subtle: 0 4px 20px -2px rgba(24, 24, 27, 0.04), 0 2px 6px -1px rgba(24, 24, 27, 0.02);
+    --shadow-hover: 0 12px 30px -4px rgba(24, 24, 27, 0.08), 0 4px 12px -2px rgba(24, 24, 27, 0.04);
 }
 
 body {
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-family: var(--font-body);
     background-color: var(--bg-primary);
     color: var(--texto-principal);
-    line-height: 1.5;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
 }

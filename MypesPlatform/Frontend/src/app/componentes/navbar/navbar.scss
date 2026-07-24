@@ -1,69 +1,108 @@
 .navbar {
-
     background-color: var(--bg-blanco);
     border-bottom: 1px solid var(--color-borde);
-    height: 60px;
-    width: 0 20px;
-
+    height: 70px;
+    padding: 0 2.5rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    box-shadow: var(--shadow-subtle);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
 }
 
 .navbar-brand a {
-    font-size: 1.25rem;
-    font-weight: 600;
+    font-family: var(--font-display);
+    font-size: 1.35rem;
+    font-weight: 800;
     color: var(--texto-principal);
     text-decoration: none;
+    letter-spacing: -0.03em;
+    transition: opacity 0.2s ease;
 
+    &:hover {
+        opacity: 0.85;
+    }
 }
 
 .navbar-menu {
     display: flex;
     align-items: center;
     list-style: none;
-    gap: 20px;
+    gap: 32px;
 
     li a {
         color: var(--texto-secundario);
         text-decoration: none;
         font-size: 0.95rem;
         font-weight: 500;
-        transition: color 0.2s;
+        transition: all 0.2s ease;
+        position: relative;
+        padding: 4px 0;
 
-        &hover,
-        &.activo {
-            color: var(--color-accion);
+        &::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background-color: var(--color-accion);
+            transition: width 0.2s ease;
         }
 
+        &:hover,
+        &.activo {
+            color: var(--texto-principal);
+            &::after {
+                width: 100%;
+            }
+        }
     }
 
     .auth-buttons {
         display: flex;
-        gap: 10px;
-        margin-left: 15px;
+        gap: 12px;
+        align-items: center;
+        margin-left: 8px;
 
         a {
-            padding: 6px 14px;
-            border-radius: 6px;
+            padding: 8px 18px;
+            border-radius: var(--radius-sm);
             font-weight: 600;
+            font-size: 0.9rem;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            cursor: pointer;
 
             &.btn-secundario {
                 border: 1px solid var(--color-borde);
                 color: var(--texto-principal);
+                background-color: transparent;
 
-                &hover {
-                    border-color: var(--color-accion);
+                &:hover {
+                    background-color: var(--bg-primary);
+                    border-color: var(--color-borde-hover);
                 }
+            }
 
-                &.btn-primario {
-                    background-color: var(--color-accion);
-                    color: white;
+            &.btn-primario {
+                background-color: var(--color-accion);
+                color: white !important;
 
-                    &:hover {
-                        background-color: var(--color-accion-hover);
-                    }
+                &:hover {
+                    background-color: var(--color-accion-hover);
                 }
+            }
+        }
+        
+        // Cierre de sesión
+        a:not(.btn-primario):not(.btn-secundario) {
+            color: var(--texto-secundario);
+            font-weight: 500;
+            &:hover {
+                color: var(--texto-principal);
             }
         }
     }

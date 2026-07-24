@@ -32,15 +32,23 @@
             <div class="card-overlay">
                 <div class="card-header-top">
                     <span class="badge">Abierto</span>
+                    <button type="button" class="badge badge-rating" (click)="abrirModalPerfil(tienda.tiendaId, $event)">
+                        ⭐ {{ tienda.promedioValoracion || 5.0 }} ({{ tienda.totalValoraciones || 0 }})
+                    </button>
                 </div>
                 
                 <div class="card-contenido">
                     <h3>{{ tienda.nombre }}</h3>
                     <p class="descripcion">{{ tienda.direccion }}</p>
 
-                    <button class="btn-ver" (click)="seleccionarTienda(tienda)">
-                        {{ tiendaSeleccionada?.tiendaId === tienda.tiendaId ? 'Ocultar' : 'Ver Productos' }}
-                    </button>
+                    <div class="card-acciones">
+                        <button class="btn-ver" (click)="seleccionarTienda(tienda)">
+                            {{ tiendaSeleccionada?.tiendaId === tienda.tiendaId ? 'Ocultar' : 'Ver Productos' }}
+                        </button>
+                        <button class="btn-perfil" (click)="abrirModalPerfil(tienda.tiendaId, $event)">
+                            Ver Reseñas
+                        </button>
+                    </div>
                 </div>
             </div>
         </article>
@@ -79,4 +87,12 @@
         </app-tiendas-productos>
     </section>
 
-</main>
+    <!-- Modal Perfil de Tienda con Reseñas -->
+    <app-tienda-perfil-modal
+        *ngIf="tiendaModalId"
+        [tiendaId]="tiendaModalId"
+        (cerrar)="cerrarModalPerfil()"
+        (valoracionEnviada)="onValoracionEnviada()">
+    </app-tienda-perfil-modal>
+
+</main>

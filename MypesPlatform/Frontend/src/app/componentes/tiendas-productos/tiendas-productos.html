@@ -3,16 +3,21 @@
     <article class="card-producto" *ngFor="let producto of productosFiltrados | filtrar : busqueda : ['nombre']">
 
         <div class="producto-imagen">
-            <img [src]="producto.imagenUrl || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(producto.nombre) + '&size=120&background=f0f4f8&color=0056b3&bold=true'" alt="{{ producto.nombre }}">
+            <img [src]="producto.imagenUrl || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(producto.nombre) + '&size=120&background=f0f4f8&color=0056b3&bold=true'"
+                alt="{{ producto.nombre }}">
         </div>
 
         <div class="producto-info">
             <h4 class="producto-nombre">{{ producto.nombre }}</h4>
+
+            <!-- Badge destacado de Tienda y Rating -->
+            <button type="button" class="producto-tienda-chip" (click)="abrirPerfilTienda(producto.tiendaId)">
+                {{ producto.tiendaNombre || 'Ver Tienda' }} &nbsp;⭐ {{ producto.tiendaPromedioValoracion || 5.0 }}
+            </button>
+
             <p class="producto-precio">S/ {{ producto.precio }}</p>
             <p class="producto-stock">Stock disponible: {{ producto.stock }}</p>
         </div>
-
-
 
     </article>
 
@@ -20,4 +25,9 @@
 
 <p class="sin-resultados" *ngIf="(productosFiltrados | filtrar : busqueda : ['nombre']).length === 0">
     No se encontraron productos.
-</p>
+</p>
+
+<!-- Modal de Perfil de Tienda -->
+<app-tienda-perfil-modal *ngIf="tiendaPerfilModalId" [tiendaId]="tiendaPerfilModalId" (cerrar)="cerrarPerfilTienda()"
+    (valoracionEnviada)="onValoracionEnviada()">
+</app-tienda-perfil-modal>

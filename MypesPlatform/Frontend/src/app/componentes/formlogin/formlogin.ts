@@ -29,7 +29,11 @@ export class Formlogin {
     this.auth.login(this.loginForm.value as Login).subscribe({
       next: (respuesta) => {
         this.auth.guardarSesion(respuesta.token, respuesta.rol);
-        this.router.navigate(['/tiendas']);
+        if (respuesta.rol === 'ADMIN') {
+          this.router.navigate(['/mi-tienda']);
+        } else {
+          this.router.navigate(['/buscar']);
+        }
       },
       error: (error) => {
         console.error('Error al iniciar sesion', error);

@@ -3,7 +3,13 @@
   @if (!modoAdmin) {
     <aside class="panel-tiendas">
       <div class="panel-header">
-        <div class="panel-icon">🏪</div>
+        <div class="panel-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 9h18v11a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"></path>
+            <path d="M3 9l2-6h14l2 6"></path>
+            <path d="M9 21v-6h6v6"></path>
+          </svg>
+        </div>
         <div>
           <h2>Tiendas MYPEs</h2>
           <p class="panel-subtitle">{{ tiendas.length }} tiendas registradas</p>
@@ -20,11 +26,9 @@
           <span>Detectando tu ubicación...</span>
         }
         @if (estadoUbicacion === 'ok') {
-          <span>📍</span>
           <span>Ubicación detectada</span>
         }
         @if (estadoUbicacion === 'error') {
-          <span>⚠️</span>
           <span>{{ errorUbicacion }}</span>
         }
       </div>
@@ -37,15 +41,20 @@
       }
 
       <ul class="lista-tiendas">
-        @for (tienda of tiendas; track tienda.tiendaId) {
+        @for (tienda of tiendasVista; track tienda.tiendaId) {
           <li
             class="tienda-item"
             [class.activa]="tiendaSeleccionada?.tiendaId === tienda.tiendaId"
             (click)="seleccionarTienda(tienda)"
           >
             <div class="tienda-nombre">{{ tienda.nombre }}</div>
-            <div class="tienda-dir">📍 {{ tienda.direccion }}</div>
-            <div class="tienda-tel">📞 {{ tienda.telefono }}</div>
+            <div class="tienda-dir">{{ tienda.direccion }}</div>
+            <div class="tienda-tel">{{ tienda.telefono }}</div>
+            @if (tienda.distanciaKm != null) {
+              <span class="badge-distancia">
+                {{ tienda.distanciaKm < 1 ? (tienda.distanciaKm * 1000 | number:'1.0-0') + ' m' : (tienda.distanciaKm | number:'1.1-1') + ' km' }}
+              </span>
+            }
             @if (tienda.latitud && tienda.longitud) {
               <span class="badge-mapa">Ver en mapa →</span>
             } @else {

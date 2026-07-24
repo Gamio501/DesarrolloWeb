@@ -3,6 +3,7 @@ package com.mypes.platform.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -36,9 +37,15 @@ public class AuthService {
             throw new RuntimeException("El nombre de usuario ya existe");
         }
 
+        if (usuarioRepository.findByEmail(request.getEmail()).isPresent()) {
+            throw new RuntimeException("El correo ya está registrado");
+        }
+
         Usuario usuario = new Usuario();
 
         usuario.setUsername(request.getUsername());
+
+        usuario.setEmail(request.getEmail());
 
         usuario.setPassword(
                 passwordEncoder.encode(
@@ -58,18 +65,20 @@ public class AuthService {
 
     public AuthResponse login(LoginRequest request) {
 
-        authenticationManager.authenticate(
+        // request.getUsername() puede ser un nombre de usuario o un correo;
+        // CustomUserDetailsService resuelve cualquiera de los dos.
+        Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getUsername(),
                         request.getPassword()
                 )
         );
 
-        String token = jwtUtil.generateToken(
-                request.getUsername()
-        );
+        String usernameCanonico = authentication.getName();
 
-        Usuario usuario = usuarioRepository.findByUsername(request.getUsername())
+        String token = jwtUtil.generateToken(usernameCanonico);
+
+        Usuario usuario = usuarioRepository.findByUsername(usernameCanonico)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
         return new AuthResponse(token, usuario.getRol().name());

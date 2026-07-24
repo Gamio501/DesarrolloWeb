@@ -5,6 +5,11 @@
   [class.mic-btn--error]="isError"
   [title]="tooltip()"
   [attr.aria-label]="tooltip()"
+  (mousedown)="onPressStart($event)"
+  (mouseup)="onPressEnd($event)"
+  (mouseleave)="onPressEnd($event)"
+  (touchstart)="onPressStart($event)"
+  (touchend)="onPressEnd($event)"
   (click)="toggle()"
   type="button">
 

@@ -6,29 +6,34 @@ import { Tienda } from '../../modelos/tienda';
 import { TiendasProductos } from '../tiendas-productos/tiendas-productos';
 import { FiltrarPipe } from '../../pipes/filtrar.pipe';
 import { MicButtonComponent } from '../mic-button/mic-button.component';
+import { TiendaPerfilModalComponent } from '../tienda-perfil-modal/tienda-perfil-modal.component';
 
 @Component({
   selector: 'app-tiendas',
-  imports: [NgFor, NgIf, FormsModule, TiendasProductos, FiltrarPipe, MicButtonComponent],
+  standalone: true,
+  imports: [NgFor, NgIf, FormsModule, TiendasProductos, FiltrarPipe, MicButtonComponent, TiendaPerfilModalComponent],
   templateUrl: './tiendas.html',
   styleUrl: './tiendas.scss',
 })
 export class Tiendas implements OnInit {
 
   tiendas: Tienda[] = [];
-
   busquedaTienda: string = '';
-
   tiendaSeleccionada: Tienda | null = null;
-
   busquedaProducto: string = '';
+  tiendaModalId: number | null = null;
 
   constructor(private tienda: TiendaService) { }
 
   ngOnInit(): void {
+    this.cargarTiendas();
+  }
+
+  cargarTiendas(): void {
     this.tienda.listar().subscribe({
       next: (data) => {
-        this.tiendas = data;
+        // Ordenar tiendas por promedioValoracion descendente (Ranking)
+        this.tiendas = data.sort((a, b) => (b.promedioValoracion ?? 5.0) - (a.promedioValoracion ?? 5.0));
       },
       error: (error) => {
         console.log(error);
@@ -59,9 +64,22 @@ export class Tiendas implements OnInit {
     return encodeURIComponent(value);
   }
 
-  /** Recibe el texto reconocido por voz y lo aplica al buscador de productos */
   recibirTextoVoz(texto: string): void {
     this.busquedaProducto = texto;
   }
 
+  abrirModalPerfil(tiendaId: number, event?: Event): void {
+    if (event) {
+      event.stopPropagation();
+    }
+    this.tiendaModalId = tiendaId;
+  }
+
+  cerrarModalPerfil(): void {
+    this.tiendaModalId = null;
+  }
+
+  onValoracionEnviada(): void {
+    this.cargarTiendas();
+  }
 }

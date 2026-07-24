@@ -21,6 +21,8 @@ public interface ProductoService {
 
     ProductoDTO update(ProductoDTO dto);
 
+    ProductoDTO actualizarImagen(Long id, String imagenUrl);
+
     List<ProductoDTO> buscarPorNombre(String q);
 
 

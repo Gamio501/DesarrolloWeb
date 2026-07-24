@@ -3,6 +3,7 @@ package com.mypes.platform.security;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -25,6 +26,9 @@ public class SecurityConfig {
         @Autowired
         private JwtFilter jwtFilter;
 
+        @Value("${app.cors.allowed-origin}")
+        private String allowedOrigin;
+
         @Bean
         public SecurityFilterChain securityFilterChain(HttpSecurity http)
                         throws Exception {
@@ -44,15 +48,15 @@ public class SecurityConfig {
                                                                 "/api/tienda/listar",
                                                                 "/productos/listar",
                                                                 "/productos/buscar",
-                                                                "/api/imagen/**",
-                                                                "/uploads/**",
-                                                                "/vista/**",
-                                                                "/css/**",
-                                                                "/js/**")
+                                                                "/api/imagen/subir",
+                                                                "/api/voice/transcribe",
+                                                                "/uploads/**")
                                                 .permitAll()
 
-                                                .requestMatchers(HttpMethod.GET, "/productos/check-admin")
-                                                .authenticated()
+                                                .requestMatchers(
+                                                                "/api/imagen/buscar",
+                                                                "/api/imagen/desde-url")
+                                                .hasRole("ADMIN")
 
                                                 .requestMatchers(
                                                                 HttpMethod.GET,
@@ -60,10 +64,19 @@ public class SecurityConfig {
                                                                 "/productos/mi-tienda")
                                                 .hasRole("ADMIN")
 
+                                                .requestMatchers(HttpMethod.GET, "/api/tienda/**")
+                                                .permitAll()
+
+                                                .requestMatchers(HttpMethod.GET, "/productos/**")
+                                                .permitAll()
+
                                                 .requestMatchers(HttpMethod.POST, "/productos/guardar")
                                                 .hasRole("ADMIN")
 
                                                 .requestMatchers(HttpMethod.PUT, "/productos/**")
+                                                .hasRole("ADMIN")
+
+                                                .requestMatchers(HttpMethod.DELETE, "/productos/**")
                                                 .hasRole("ADMIN")
 
                                                 .requestMatchers(HttpMethod.POST, "/api/tienda/guardar")
@@ -93,7 +106,7 @@ public class SecurityConfig {
         @Bean
         public CorsConfigurationSource corsConfigurationSource() {
                 CorsConfiguration config = new CorsConfiguration();
-                config.setAllowedOrigins(List.of("http://localhost:4200"));
+                config.setAllowedOrigins(List.of(allowedOrigin));
                 config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
                 config.setAllowedHeaders(List.of("*"));
                 config.setAllowCredentials(true);

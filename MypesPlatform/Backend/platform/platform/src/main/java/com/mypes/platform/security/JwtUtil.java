@@ -4,30 +4,35 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
 import java.util.Date;
+import java.util.UUID;
 
 @Component
 public class JwtUtil {
 
-    private final String SECRET = "mypesplataformaseguridadjwt2026proyectofinal";
+    @Value("${app.jwt.secret}")
+    private String secret;
 
-    private final long EXPIRATION = 6000000;
+    @Value("${app.jwt.expiration-ms}")
+    private long expiration;
 
     private Key getKey() {
-        return Keys.hmacShaKeyFor(SECRET.getBytes());
+        return Keys.hmacShaKeyFor(secret.getBytes());
     }
 
     public String generateToken(String username) {
 
         return Jwts.builder()
+                .setId(UUID.randomUUID().toString())
                 .setSubject(username)
                 .setIssuedAt(new Date())
                 .setExpiration(
                         new Date(
-                                System.currentTimeMillis() + EXPIRATION
+                                System.currentTimeMillis() + expiration
                         )
                 )
                 .signWith(
@@ -40,6 +45,18 @@ public class JwtUtil {
     public String extractUsername(String token) {
 
         return extractClaims(token).getSubject();
+
+    }
+
+    public String extractJti(String token) {
+
+        return extractClaims(token).getId();
+
+    }
+
+    public Date extractExpiration(String token) {
+
+        return extractClaims(token).getExpiration();
 
     }
 

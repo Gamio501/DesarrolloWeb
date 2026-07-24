@@ -1,18 +1,23 @@
 <section class="vs-page" id="voice-search-page">
 
-  <!-- ══ HERO ════════════════════════════════════════════════════ -->
+  <!-- HERO -->
   <div class="vs-hero">
     <div class="vs-hero__glow"></div>
 
     <h1 class="vs-hero__title">
-      <span class="vs-hero__title-icon">🔍</span>
+      <span class="vs-hero__title-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"></circle>
+          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+      </span>
       Motor de Búsqueda
     </h1>
     <p class="vs-hero__subtitle">
       Dicta o escribe para encontrar productos al instante
     </p>
 
-    <!-- ── Botón micrófono ─────────────────────────────────── -->
+    <!-- Botón micrófono -->
     <div class="vs-mic-wrapper">
       <button
         id="btn-mic"
@@ -20,8 +25,12 @@
         [class.vs-mic--listening]="isListening"
         [class.vs-mic--processing]="isProcessing"
         [class.vs-mic--disabled]="!isSupported"
-        (click)="toggleListening()"
-        [attr.aria-label]="isListening ? 'Detener escucha' : 'Iniciar búsqueda por voz'"
+        (mousedown)="onPressStart($event)"
+        (mouseup)="onPressEnd($event)"
+        (mouseleave)="onPressEnd($event)"
+        (touchstart)="onPressStart($event)"
+        (touchend)="onPressEnd($event)"
+        [attr.aria-label]="isListening ? 'Escuchando... Suelta para buscar' : 'Mantén presionado para hablar'"
         [disabled]="!isSupported || isProcessing">
 
         <!-- Anillos de onda animados -->
@@ -52,17 +61,17 @@
       <div class="vs-mic__label">
         @if (isListening) {
           <span class="vs-mic__label--active">
-            <span class="vs-mic__dot"></span> Escuchando...
+            <span class="vs-mic__dot"></span> Escuchando... Suelta para buscar
           </span>
         } @else if (isProcessing) {
-          <span class="vs-mic__label--processing">Buscando...</span>
+          <span class="vs-mic__label--processing">Buscando producto...</span>
         } @else {
-          <span class="vs-mic__label--idle">Toca el micrófono</span>
+          <span class="vs-mic__label--idle">Mantén presionado para hablar</span>
         }
       </div>
     </div>
 
-    <!-- ── Transcripción en tiempo real ───────────────────────── -->
+    <!-- Transcripción en tiempo real -->
     @if (transcript) {
       <div class="vs-transcript" id="transcript-box">
         <span class="vs-transcript__label">Escuché:</span>
@@ -70,7 +79,7 @@
       </div>
     }
 
-    <!-- ── Búsqueda por texto ──────────────────────────────────── -->
+    <!-- Búsqueda por texto -->
     <div class="vs-search-bar">
       <input
         id="txt-search"
@@ -91,7 +100,19 @@
       </button>
     </div>
 
-    <!-- ── Error ──────────────────────────────────────────────── -->
+    <!-- Sugerencias rápidas -->
+    <div class="vs-suggestions">
+      <span class="vs-suggestions__label">Búsquedas populares:</span>
+      <div class="vs-suggestions__list">
+        @for (sug of sugerencias; track sug) {
+          <button class="vs-suggestion-chip" (click)="buscarSugerencia(sug)">
+            {{ sug }}
+          </button>
+        }
+      </div>
+    </div>
+
+    <!-- Error -->
     @if (hasError && errorMessage) {
       <div class="vs-alert vs-alert--error" role="alert" id="error-msg">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="20" height="20">
@@ -102,13 +123,18 @@
     }
   </div>
 
-  <!-- ══ RESULTADOS ═══════════════════════════════════════════════ -->
+  <!-- RESULTADOS -->
   <div class="vs-results-section">
 
     <!-- Sin resultados -->
     @if (hasNoResults) {
       <div class="vs-empty" id="no-results-msg">
-        <div class="vs-empty__icon">🔎</div>
+        <div class="vs-empty__icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+        </div>
         <h3 class="vs-empty__title">Sin resultados</h3>
         <p class="vs-empty__text">
           No encontramos productos para <strong>"{{ textQuery }}"</strong>.
@@ -143,7 +169,11 @@
                   loading="lazy" />
               } @else {
                 <div class="vs-card__img-placeholder">
-                  <span>🛍️</span>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"></path>
+                    <path d="M3 6h18"></path>
+                    <path d="M16 10a4 4 0 0 1-8 0"></path>
+                  </svg>
                 </div>
               }
               <div class="vs-card__stock-badge"
@@ -155,13 +185,45 @@
             <!-- Info -->
             <div class="vs-card__body">
               <h3 class="vs-card__name">{{ producto.nombre }}</h3>
+              
+              <!-- Badge de Tienda y Valoración -->
+              <button
+                type="button"
+                class="vs-card__store-chip"
+                (click)="abrirPerfilTienda(producto.tiendaId)">
+                <span class="vs-card__store-icon">📍</span>
+                <span class="vs-card__store-name">{{ producto.tiendaNombre || 'Ver Tienda' }}</span>
+                <span class="vs-card__store-rating">★ {{ producto.tiendaPromedioValoracion || 5.0 }}</span>
+              </button>
+
               <p class="vs-card__price">{{ formatPrecio(producto.precio) }}</p>
             </div>
           </article>
         }
       </div>
+
+      <!-- Botón Ver todos los productos -->
+      @if (todosLosProductos.length > resultados.length && !mostrarTodasLasTiendas) {
+        <div class="vs-show-more-wrapper">
+          <p class="vs-show-more-hint">
+            Mostrando las 10 mejores tiendas en ranking. Hay {{ todosLosProductos.length - resultados.length }} producto(s) adicional(es) en otras tiendas.
+          </p>
+          <button class="vs-btn-show-more" (click)="verTodasLasTiendas()">
+            Ver todos los productos
+          </button>
+        </div>
+      }
     }
 
   </div>
+
+  <!-- Modal Perfil de Tienda -->
+  @if (tiendaIdSeleccionada) {
+    <app-tienda-perfil-modal
+      [tiendaId]="tiendaIdSeleccionada"
+      (cerrar)="cerrarPerfilTienda()"
+      (valoracionEnviada)="onValoracionEnviada()">
+    </app-tienda-perfil-modal>
+  }
 
 </section>

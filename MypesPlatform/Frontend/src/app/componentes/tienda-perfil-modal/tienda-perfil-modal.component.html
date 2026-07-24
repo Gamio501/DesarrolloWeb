@@ -1,0 +1,107 @@
+<div class="tpm-overlay" (click)="cerrarModal()">
+  <div class="tpm-modal" (click)="$event.stopPropagation()">
+    <!-- Botón cerrar -->
+    <button class="tpm-close" (click)="cerrarModal()" aria-label="Cerrar">✕</button>
+
+    @if (cargando) {
+      <div class="tpm-loading">
+        <span class="tpm-spinner"></span>
+        <p>Cargando información de la tienda...</p>
+      </div>
+    } @else if (tienda) {
+      <!-- Encabezado de la tienda -->
+      <div class="tpm-header">
+        <div class="tpm-header__avatar">
+          @if (tienda.imagenUrl) {
+            <img [src]="tienda.imagenUrl" [alt]="tienda.nombre" />
+          } @else {
+            <div class="tpm-header__placeholder">🏪</div>
+          }
+        </div>
+        <div class="tpm-header__info">
+          <h2>{{ tienda.nombre }}</h2>
+          <p class="tpm-header__meta">📍 {{ tienda.direccion }} &nbsp;|&nbsp; 📞 {{ tienda.telefono }}</p>
+          <div class="tpm-header__rating">
+            <span class="tpm-stars-display">
+              ★ {{ tienda.promedioValoracion || 5.0 }}
+            </span>
+            <span class="tpm-rating-count">({{ tienda.totalValoraciones || 0 }} valoraciones)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sección de Comentarios y Reseñas -->
+      <div class="tpm-body">
+        <h3>Opiniones de Clientes</h3>
+
+        @if (valoraciones.length === 0) {
+          <p class="tpm-empty">Aún no hay opiniones para esta tienda. ¡Sé el primero en valorar!</p>
+        } @else {
+          <div class="tpm-reviews-list">
+            @for (val of valoraciones; track val.valoracionId) {
+              <div class="tpm-review-card">
+                <div class="tpm-review-card__top">
+                  <span class="tpm-review-card__user">👤 {{ val.usuarioNombre || 'Cliente' }}</span>
+                  <span class="tpm-review-card__stars">
+                    @for (s of [1,2,3,4,5]; track s) {
+                      <span [class.active]="s <= val.estrellas">★</span>
+                    }
+                  </span>
+                </div>
+                @if (val.comentario) {
+                  <p class="tpm-review-card__comment">{{ val.comentario }}</p>
+                }
+              </div>
+            }
+          </div>
+        }
+
+        <!-- Formulario para agregar valoración (si está logueado) -->
+        <div class="tpm-add-rating">
+          <h4>Deja tu opinión y valoración</h4>
+          @if (auth.estaLogueado()) {
+            <div class="tpm-form">
+              <div class="tpm-star-picker">
+                <label>Tu puntuación:</label>
+                <div class="tpm-stars-input">
+                  @for (star of [1,2,3,4,5]; track star) {
+                    <button
+                      type="button"
+                      class="tpm-star-btn"
+                      [class.active]="star <= estrellasSeleccionadas"
+                      (click)="seleccionarEstrellas(star)">
+                      ★
+                    </button>
+                  }
+                </div>
+              </div>
+
+              <textarea
+                class="tpm-textarea"
+                rows="3"
+                placeholder="Escribe un comentario sobre el servicio, productos o atención..."
+                [(ngModel)]="comentario">
+              </textarea>
+
+              @if (mensajeExito) {
+                <div class="tpm-alert tpm-alert--success">{{ mensajeExito }}</div>
+              }
+              @if (mensajeError) {
+                <div class="tpm-alert tpm-alert--error">{{ mensajeError }}</div>
+              }
+
+              <button
+                class="tpm-submit-btn"
+                [disabled]="enviando"
+                (click)="enviarValoracion()">
+                {{ enviando ? 'Enviando...' : 'Publicar Valoración' }}
+              </button>
+            </div>
+          } @else {
+            <p class="tpm-login-hint">Debes iniciar sesión para publicar un comentario y valoración.</p>
+          }
+        </div>
+      </div>
+    }
+  </div>
+</div>

@@ -1,9 +1,7 @@
-// ══════════════════════════════════════════════════════════════════
 // MIC-BUTTON COMPONENT — SASS estructurado
 // Variables · Mixins · Keyframes · BEM
-// ══════════════════════════════════════════════════════════════════
 
-// ── Variables ─────────────────────────────────────────────────────
+// Variables
 $mic-color-idle:      #0969da;
 $mic-color-listening: #e5534b;
 $mic-color-error:     #bf8700;
@@ -15,7 +13,7 @@ $mic-radius:          8px;
 $mic-transition:      180ms cubic-bezier(0.4, 0, 0.2, 1);
 $ring-color:          rgba(229, 83, 75, 0.35);
 
-// ── Keyframes ─────────────────────────────────────────────────────
+// Keyframes
 @keyframes micPulse {
   0%   { transform: translate(-50%, -50%) scale(1);   opacity: 0.7; }
   100% { transform: translate(-50%, -50%) scale(2.2); opacity: 0;   }
@@ -26,7 +24,7 @@ $ring-color:          rgba(229, 83, 75, 0.35);
   50%       { opacity: 0.5; }
 }
 
-// ── Mixin: ring pulsante ──────────────────────────────────────────
+// Mixin: ring pulsante
 @mixin pulse-ring($delay) {
   position: absolute;
   width: $mic-size;
@@ -42,7 +40,7 @@ $ring-color:          rgba(229, 83, 75, 0.35);
   animation-delay: $delay;
 }
 
-// ── Componente host (posición relativa para los anillos) ──────────
+// Componente host (posición relativa para los anillos)
 :host {
   position: relative;
   display: inline-flex;
@@ -51,7 +49,7 @@ $ring-color:          rgba(229, 83, 75, 0.35);
   gap: 4px;
 }
 
-// ── Botón principal ───────────────────────────────────────────────
+// Botón principal
 .mic-btn {
   position: relative;
   width: $mic-size;
@@ -80,7 +78,7 @@ $ring-color:          rgba(229, 83, 75, 0.35);
     transform: scale(0.94);
   }
 
-  // ── Estado: escuchando ──────────────────────────────────────────
+  // Estado: escuchando
   &--listening {
     background: $mic-bg-listening;
     color: $mic-color-listening;
@@ -101,7 +99,7 @@ $ring-color:          rgba(229, 83, 75, 0.35);
     }
   }
 
-  // ── Estado: error ───────────────────────────────────────────────
+  // Estado: error
   &--error {
     background: $mic-bg-error;
     color: $mic-color-error;
@@ -113,7 +111,7 @@ $ring-color:          rgba(229, 83, 75, 0.35);
   }
 }
 
-// ── Anillos de pulso ──────────────────────────────────────────────
+// Anillos de pulso
 .mic-ring {
   @include pulse-ring(0s);
 
@@ -122,7 +120,7 @@ $ring-color:          rgba(229, 83, 75, 0.35);
   }
 }
 
-// ── Etiqueta de error ─────────────────────────────────────────────
+// Etiqueta de error
 .mic-error-label {
   font-size: 0.72rem;
   color: $mic-color-error;

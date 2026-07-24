@@ -16,6 +16,8 @@ public interface TiendaService {
     TiendaDTO findMiTienda();
 
     TiendaDTO update(TiendaDTO dto);
+
+    TiendaDTO actualizarImagen(Long id, String imagenUrl);
     
 
 

@@ -1,5 +1,4 @@
 export interface Tienda {
-
     tiendaId: number;
     nombre: string;
     direccion: string;
@@ -8,4 +7,6 @@ export interface Tienda {
     latitud?: number;
     longitud?: number;
     imagenUrl?: string;
+    promedioValoracion?: number;
+    totalValoraciones?: number;
 }

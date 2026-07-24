@@ -7,6 +7,7 @@ import com.mypes.platform.entity.Usuario;
 import com.mypes.platform.repository.ProductoRepository;
 import com.mypes.platform.repository.TiendaRepository;
 import com.mypes.platform.repository.UsuarioRepository;
+import com.mypes.platform.service.WikimediaImageService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -28,7 +29,8 @@ public class DataSeeder {
                         UsuarioRepository usuarioRepository,
                         TiendaRepository tiendaRepository,
                         ProductoRepository productoRepository,
-                        PasswordEncoder passwordEncoder) {
+                        PasswordEncoder passwordEncoder,
+                        WikimediaImageService wikimediaImageService) {
                 return args -> {
                         // Evitar duplicados: si ya hay usuarios, no insertar nada
                         if (usuarioRepository.count() > 0) {
@@ -42,12 +44,14 @@ public class DataSeeder {
                         // ── USUARIOS ADMIN ──────────────────────────────────────────────────────────
                         Usuario admin1 = Usuario.builder()
                                         .username("admin1")
+                                        .email("admin1@mypes.test")
                                         .password(passwordEncoder.encode("admin123"))
                                         .rol(Rol.ADMIN)
                                         .build();
 
                         Usuario admin2 = Usuario.builder()
                                         .username("admin2")
+                                        .email("admin2@mypes.test")
                                         .password(passwordEncoder.encode("admin456"))
                                         .rol(Rol.ADMIN)
                                         .build();
@@ -55,12 +59,14 @@ public class DataSeeder {
                         // ── USUARIOS CLIENTE ────────────────────────────────────────────────────────
                         Usuario cliente1 = Usuario.builder()
                                         .username("cliente1")
+                                        .email("cliente1@mypes.test")
                                         .password(passwordEncoder.encode("cliente123"))
                                         .rol(Rol.CLIENTE)
                                         .build();
 
                         Usuario cliente2 = Usuario.builder()
                                         .username("cliente2")
+                                        .email("cliente2@mypes.test")
                                         .password(passwordEncoder.encode("cliente456"))
                                         .rol(Rol.CLIENTE)
                                         .build();
@@ -75,13 +81,16 @@ public class DataSeeder {
                         System.out.println("[DataSeeder] Usuarios insertados: " + usuarios.size());
 
                         // ── TIENDAS (coordenadas en Sullana, Piura, Peru) ───────────────────────────
+                        // La foto se busca en Wikimedia Commons por nombre; si falla (sin red al
+                        // arrancar, sin resultados, etc.) queda null y el admin la asigna después
+                        // desde "Mi Tienda" — no hay URLs hardcodeadas.
                         Tienda tienda1 = Tienda.builder()
                                         .nombre("Tienda Don Carlos")
                                         .direccion("Jr. Lima 123, Sullana")
                                         .telefono("073-123456")
                                         .latitud(-4.8888)
                                         .longitud(-80.6869)
-                                        .imagenUrl(null)
+                                        .imagenUrl(wikimediaImageService.buscarFotoTienda("Tienda Don Carlos"))
                                         .usuario(admin1)
                                         .build();
 
@@ -91,7 +100,7 @@ public class DataSeeder {
                                         .telefono("073-654321")
                                         .latitud(-4.8910)
                                         .longitud(-80.6845)
-                                        .imagenUrl(null)
+                                        .imagenUrl(wikimediaImageService.buscarFotoTienda("Bazar El Sol"))
                                         .usuario(admin2)
                                         .build();
 
@@ -107,7 +116,7 @@ public class DataSeeder {
                                         .nombre("Arroz Extra")
                                         .precio(3.50)
                                         .stock(200)
-                                        .imagenUrl("https://plazavea.vteximg.com.br/arquivos/ids/27552446-450-450/433778.jpg?v=638313120991600000")
+                                        .imagenUrl(wikimediaImageService.buscarFotoProducto("Arroz"))
                                         .tienda(tienda1)
                                         .usuario(admin1)
                                         .build();
@@ -116,7 +125,7 @@ public class DataSeeder {
                                         .nombre("Aceite Vegetal 1L")
                                         .precio(8.90)
                                         .stock(150)
-                                        .imagenUrl("https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ5LOGiFluIBJVWjj49HC5ZwoCbzK1kmBfZfqWgq8zZb5zMKpMRRUHYjUc&s=10")
+                                        .imagenUrl(wikimediaImageService.buscarFotoProducto("Aceite vegetal"))
                                         .tienda(tienda1)
                                         .usuario(admin1)
                                         .build();
@@ -125,7 +134,7 @@ public class DataSeeder {
                                         .nombre("Azucar Rubia 1kg")
                                         .precio(4.20)
                                         .stock(180)
-                                        .imagenUrl("https://plazavea.vteximg.com.br/arquivos/ids/30578637-512-512/20283176.jpg")
+                                        .imagenUrl(wikimediaImageService.buscarFotoProducto("Azucar rubia"))
                                         .tienda(tienda1)
                                         .usuario(admin1)
                                         .build();
@@ -135,7 +144,7 @@ public class DataSeeder {
                                         .nombre("Chocolates Nestlé")
                                         .precio(5.00)
                                         .stock(60)
-                                        .imagenUrl("https://metroio.vtexassets.com/arquivos/ids/517940-800-auto?v=638470065747070000&width=800&height=auto&aspect=true")
+                                        .imagenUrl(wikimediaImageService.buscarFotoProducto("Chocolate"))
                                         .tienda(tienda2)
                                         .usuario(admin2)
                                         .build();
@@ -144,7 +153,7 @@ public class DataSeeder {
                                         .nombre("Huevos")
                                         .precio(12.00)
                                         .stock(80)
-                                        .imagenUrl("https://plazavea.vteximg.com.br/arquivos/ids/29018245-450-450/20138032.jpg?v=638500304841930000")
+                                        .imagenUrl(wikimediaImageService.buscarFotoProducto("Huevos"))
                                         .tienda(tienda2)
                                         .usuario(admin2)
                                         .build();
@@ -153,7 +162,7 @@ public class DataSeeder {
                                         .nombre("Galletas")
                                         .precio(1.50)
                                         .stock(300)
-                                        .imagenUrl("https://i.ytimg.com/vi/cYzVUdC_2hc/maxresdefault.jpg")
+                                        .imagenUrl(wikimediaImageService.buscarFotoProducto("Galletas"))
                                         .tienda(tienda2)
                                         .usuario(admin2)
                                         .build();

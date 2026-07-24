@@ -16,19 +16,13 @@ import lombok.Setter;
 public class TiendaDTO {
 
     private Long tiendaId;
-
     private String nombre;
-
     private String direccion;
-
     private String telefono;
-
     private Long usuarioId;
-
     private Double latitud;
-
     private Double longitud;
-
     private String imagenUrl;
-
+    private Double promedioValoracion;
+    private Integer totalValoraciones;
 }

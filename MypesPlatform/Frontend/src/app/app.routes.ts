@@ -7,12 +7,12 @@ import { MiTienda } from './componentes/mi-tienda/mi-tienda';
 import { Mapa } from './componentes/mapa/mapa';
 import { VoiceSearchComponent } from './componentes/voice-search/voice-search.component';
 import { GateComponent } from './componentes/gate/gate.component';
+import { authGuard } from './guards/auth-guard';
 import { guestGuardGuard } from './guards/guest-guard-guard';
 import { clienteGuard } from './guards/cliente-guard';
 import { adminGuard } from './guards/admin-guard';
 
 export const routes: Routes = [
-
     {
         path: '',
         component: GateComponent
@@ -23,7 +23,8 @@ export const routes: Routes = [
     },
     {
         path: 'tiendas',
-        component: Tiendas
+        component: Tiendas,
+        canActivate: [authGuard]
     },
     {
         path: 'mapa',
@@ -32,18 +33,20 @@ export const routes: Routes = [
     },
     {
         path: 'buscar',
-        component: VoiceSearchComponent
+        component: VoiceSearchComponent,
+        canActivate: [authGuard]
     },
     {
         path: 'register',
-        component: Register
+        component: Register,
+        canActivate: [guestGuardGuard]
     },
     {
         path: 'login',
         component: Formlogin,
         canActivate: [guestGuardGuard]
-
-    }, {
+    },
+    {
         path: 'mi-tienda',
         component: MiTienda,
         canActivate: [adminGuard]
@@ -52,9 +55,4 @@ export const routes: Routes = [
         path: '**',
         redirectTo: ''
     }
-
-
-
-
-
 ];

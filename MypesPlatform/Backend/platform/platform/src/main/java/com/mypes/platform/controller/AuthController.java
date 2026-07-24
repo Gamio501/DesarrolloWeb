@@ -1,7 +1,7 @@
 package com.mypes.platform.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -11,30 +11,51 @@ import com.mypes.platform.dto.AuthResponse;
 import com.mypes.platform.dto.LoginRequest;
 import com.mypes.platform.dto.RegisterRequest;
 import com.mypes.platform.dto.RegisterResponse;
+import com.mypes.platform.security.JwtUtil;
+import com.mypes.platform.security.TokenBlacklistService;
 import com.mypes.platform.service.AuthService;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/auth")
-@CrossOrigin(origins = "http://localhost:4200")
 public class AuthController {
 
     @Autowired
     private AuthService authService;
 
+    @Autowired
+    private JwtUtil jwtUtil;
+
+    @Autowired
+    private TokenBlacklistService tokenBlacklistService;
+
     @PostMapping("/register")
     public RegisterResponse register(
-            @RequestBody RegisterRequest request) {
+            @Valid @RequestBody RegisterRequest request) {
 
         return authService.register(request);
 
     }
 
     @PostMapping("/login")
-    public AuthResponse login(@RequestBody LoginRequest request) {
-
-        System.out.println("ENTRO AL LOGIN");
+    public AuthResponse login(@Valid @RequestBody LoginRequest request) {
 
         return authService.login(request);
 
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout(HttpServletRequest request) {
+
+        String authHeader = request.getHeader("Authorization");
+
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            String token = authHeader.substring(7);
+            tokenBlacklistService.revocar(jwtUtil.extractJti(token), jwtUtil.extractExpiration(token));
+        }
+
+        return ResponseEntity.ok().build();
     }
 }

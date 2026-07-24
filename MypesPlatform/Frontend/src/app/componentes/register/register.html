@@ -10,8 +10,27 @@
             </div>
 
             <div class="form-group">
+                <label>Correo</label>
+                <input type="email" formControlName="email" placeholder="tucorreo@ejemplo.com">
+                <small class="form-error" *ngIf="registerForm.get('email')?.invalid && registerForm.get('email')?.touched">
+                    Ingresa un correo válido.
+                </small>
+            </div>
+
+            <div class="form-group">
                 <label>Contraseña</label>
-                <input type="password" formControlName="password" placeholder="Mínimo 6 caracteres">
+                <input type="password" formControlName="password" placeholder="Mínimo 8 caracteres, mayúscula, minúscula, número y símbolo">
+                <small class="form-error" *ngIf="registerForm.get('password')?.invalid && registerForm.get('password')?.touched">
+                    Debe tener 8-64 caracteres, mayúscula, minúscula, número y carácter especial.
+                </small>
+            </div>
+
+            <div class="form-group">
+                <label>Confirmar contraseña</label>
+                <input type="password" formControlName="confirmarPassword" placeholder="Repite la contraseña">
+                <small class="form-error" *ngIf="registerForm.errors?.['passwordsNoCoinciden'] && registerForm.get('confirmarPassword')?.touched">
+                    Las contraseñas no coinciden.
+                </small>
             </div>
 
             <div class="form-group">

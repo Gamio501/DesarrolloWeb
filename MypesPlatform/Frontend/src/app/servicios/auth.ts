@@ -25,9 +25,21 @@ export class Auth {
   }
 
   logout(): void {
+    const token = localStorage.getItem('token');
+
     localStorage.removeItem('token');
     localStorage.removeItem('rol');
-    this.router.navigate(['/tiendas']);
+
+    if (token) {
+      this.http.post(`${this.baseUrl}/logout`, {}, {
+        headers: { Authorization: `Bearer ${token}` },
+      }).subscribe({ error: () => {} });
+    }
+
+    // Recarga completa: garantiza que el navbar y toda la app arranquen
+    // desde cero con localStorage ya limpio, sin depender de que el change
+    // detection de Angular refresque a tiempo.
+    window.location.href = '/login';
   }
 
   estaLogueado(): boolean {

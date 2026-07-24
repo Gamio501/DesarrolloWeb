@@ -26,3 +26,8 @@ Thumbs.db
 
 # Uploads
 uploads/
+MypesPlatform/Backend/platform/platform/pom.xml
+MypesPlatform/Backend/platform/platform/src/main/resources/application.properties
+
+# Modelos de voz descargados (Vosk, ~58MB, no es código fuente)
+MypesPlatform/Backend/platform/platform/models/

@@ -1,56 +1,51 @@
-// ═══════════════════════════════════════════════════════════════
 // VOICE SEARCH COMPONENT — SASS ESTRUCTURADO
 // Variables · Mixins · Anidamiento · Animaciones
-// ═══════════════════════════════════════════════════════════════
 
-// ── Variables ────────────────────────────────────────────────────
-$primary:         hsl(256, 80%, 62%);     // Violeta vibrante
-$primary-light:   hsl(256, 90%, 75%);
-$primary-glow:    hsl(256, 80%, 62%, 0.35);
-$secondary:       hsl(338, 80%, 58%);     // Rosa-coral acento
-$accent:          hsl(194, 80%, 55%);     // Cian suave
-$bg-page:         hsl(228, 25%, 7%);      // Fondo oscuro profundo
-$bg-surface:      hsl(228, 20%, 11%);
-$bg-card:         hsl(228, 18%, 14%);
-$bg-card-hover:   hsl(228, 22%, 18%);
-$border-color:    hsl(228, 20%, 20%);
-$text-primary:    hsl(228, 15%, 95%);
-$text-secondary:  hsl(228, 10%, 60%);
-$text-muted:      hsl(228, 10%, 40%);
-$error-color:     hsl(0, 75%, 60%);
-$success-color:   hsl(145, 65%, 50%);
-$low-stock-color: hsl(38, 95%, 55%);
+// Variables
+$primary:         var(--color-accion, #4f46e5);     // Elegant Indigo
+$primary-light:   hsl(244, 90%, 75%);
+$primary-glow:    rgba(79, 70, 229, 0.15);
+$secondary:       var(--color-accion, #4f46e5);     // Acento
+$accent:          var(--color-accion, #4f46e5);     // Cian suave
+$bg-page:         var(--bg-primary, #faf9f6);      // Fondo claro
+$bg-surface:      var(--bg-blanco, #ffffff);
+$bg-card:         var(--bg-blanco, #ffffff);
+$bg-card-hover:   var(--bg-primary, #faf9f6);
+$border-color:    var(--color-borde, #e4e4e7);
+$text-primary:    var(--texto-principal, #18181b);
+$text-secondary:  var(--texto-secundario, #52525b);
+$text-muted:      #71717a;
+$error-color:     #f43f5e;
+$success-color:   #10b981;
+$low-stock-color: #f59e0b;
 
-$radius-sm:   8px;
-$radius-md:   16px;
-$radius-lg:   24px;
+$radius-sm:   var(--radius-sm, 6px);
+$radius-md:   var(--radius-md, 12px);
+$radius-lg:   var(--radius-lg, 18px);
 $radius-full: 9999px;
 
-$shadow-card: 0 4px 24px hsl(228, 30%, 3%, 0.5);
-$shadow-glow: 0 0 40px $primary-glow;
-$shadow-btn:  0 4px 20px hsl(256, 80%, 45%, 0.5);
+$shadow-card: var(--shadow-subtle);
+$shadow-glow: none;
+$shadow-btn:  none;
 
-$font-display: 'Inter', 'Segoe UI', sans-serif;
+$font-display: var(--font-body), sans-serif;
 $transition-fast:   150ms ease;
 $transition-normal: 280ms cubic-bezier(0.4, 0, 0.2, 1);
 $transition-spring: 400ms cubic-bezier(0.34, 1.56, 0.64, 1);
 
-// ── Mixins ───────────────────────────────────────────────────────
-
+// Mixins
 // Glassmorphism
 @mixin glass($blur: 12px, $alpha: 0.06) {
-  background: hsl(228, 20%, 100%, $alpha);
+  background: rgba(255, 255, 255, 0.7);
   backdrop-filter: blur($blur);
   -webkit-backdrop-filter: blur($blur);
-  border: 1px solid hsl(228, 20%, 80%, 0.08);
+  border: 1px solid var(--color-borde, #e4e4e7);
+  box-shadow: var(--shadow-subtle);
 }
 
 // Gradiente de texto
 @mixin gradient-text($from: $primary, $to: $secondary) {
-  background: linear-gradient(135deg, $from, $to);
-  background-clip: text;
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: var(--texto-principal, #18181b);
 }
 
 // Botón base
@@ -107,8 +102,7 @@ $transition-spring: 400ms cubic-bezier(0.34, 1.56, 0.64, 1);
   }
 }
 
-// ── Keyframes ────────────────────────────────────────────────────
-
+// Keyframes
 @keyframes pulseRing {
   0%   { transform: translate(-50%, -50%) scale(0.8); opacity: 0.8; }
   100% { transform: translate(-50%, -50%) scale(2.2); opacity: 0; }
@@ -134,8 +128,7 @@ $transition-spring: 400ms cubic-bezier(0.34, 1.56, 0.64, 1);
   50%       { opacity: 0.3; }
 }
 
-// ── Página principal ─────────────────────────────────────────────
-
+// Página principal
 .vs-page {
   min-height: 100vh;
   background: $bg-page;
@@ -144,8 +137,7 @@ $transition-spring: 400ms cubic-bezier(0.34, 1.56, 0.64, 1);
   padding-bottom: 80px;
 }
 
-// ── Hero Section ─────────────────────────────────────────────────
-
+// Hero Section
 .vs-hero {
   @include flex-center(column);
   gap: 28px;
@@ -161,7 +153,7 @@ $transition-spring: 400ms cubic-bezier(0.34, 1.56, 0.64, 1);
     inset: 0;
     background: radial-gradient(
       ellipse 80% 50% at 50% 0%,
-      hsl(256, 60%, 15%) 0%,
+      rgba(79, 70, 229, 0.04) 0%,
       transparent 70%
     );
     pointer-events: none;
@@ -172,7 +164,7 @@ $transition-spring: 400ms cubic-bezier(0.34, 1.56, 0.64, 1);
     width: 480px;
     height: 480px;
     border-radius: $radius-full;
-    background: radial-gradient(circle, $primary-glow 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(79, 70, 229, 0.05) 0%, transparent 70%);
     top: -100px;
     left: 50%;
     transform: translateX(-50%);
@@ -181,17 +173,18 @@ $transition-spring: 400ms cubic-bezier(0.34, 1.56, 0.64, 1);
   }
 
   &__title {
+    font-family: var(--font-display);
     font-size: clamp(2rem, 5vw, 3.2rem);
     font-weight: 800;
-    letter-spacing: -0.03em;
+    letter-spacing: -0.04em;
     line-height: 1.1;
     margin: 0;
-    @include gradient-text($primary-light, $secondary);
+    color: var(--texto-principal, #18181b);
 
     &-icon {
       display: inline-block;
       margin-right: 8px;
-      -webkit-text-fill-color: initial;
+      color: var(--color-accion);
     }
   }
 
@@ -199,12 +192,11 @@ $transition-spring: 400ms cubic-bezier(0.34, 1.56, 0.64, 1);
     font-size: 1.05rem;
     color: $text-secondary;
     margin: 0;
-    letter-spacing: 0.01em;
+    letter-spacing: -0.01em;
   }
 }
 
-// ── Botón Micrófono ───────────────────────────────────────────────
-
+// Botón Micrófono
 .vs-mic-wrapper {
   @include flex-center(column);
   gap: 16px;
@@ -215,28 +207,29 @@ $transition-spring: 400ms cubic-bezier(0.34, 1.56, 0.64, 1);
   width: 88px;
   height: 88px;
   border-radius: $radius-full;
-  border: none;
-  background: linear-gradient(135deg, $primary, hsl(270, 70%, 50%));
-  color: #fff;
+  border: 1px solid var(--color-borde, #e4e4e7);
+  background: var(--bg-blanco, #ffffff);
+  color: var(--texto-principal, #18181b);
   cursor: pointer;
   transition: all $transition-spring;
-  box-shadow: $shadow-btn;
+  box-shadow: var(--shadow-subtle);
   @include flex-center;
 
   &:hover:not(:disabled) {
     transform: scale(1.08);
-    box-shadow: 0 6px 32px hsl(256, 80%, 45%, 0.65);
+    border-color: var(--color-borde-hover);
+    box-shadow: var(--shadow-hover);
   }
 
   &:active:not(:disabled) {
     transform: scale(0.95);
   }
 
-  // ── Anillos (solo visibles al escuchar) ──────────────────────
+  // Anillos (solo visibles al escuchar)
   &__ring {
     position: absolute;
     border-radius: $radius-full;
-    border: 2px solid $primary-light;
+    border: 2px solid rgba(236, 72, 153, 0.4);
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%) scale(0);
@@ -248,11 +241,12 @@ $transition-spring: 400ms cubic-bezier(0.34, 1.56, 0.64, 1);
     &--3 { width: 200px; height: 200px; }
   }
 
-  // ── Estado: escuchando ────────────────────────────────────────
+  // Estado: escuchando
   &--listening {
-    background: linear-gradient(135deg, $secondary, hsl(310, 80%, 52%));
-    box-shadow: 0 0 0 4px hsl(338, 80%, 58%, 0.3), $shadow-btn;
-    animation: shimmer 1.5s ease-in-out infinite;
+    background: #ec4899;
+    color: #ffffff;
+    border-color: #ec4899;
+    box-shadow: 0 0 0 4px rgba(236, 72, 153, 0.2);
 
     .vs-mic__ring {
       &--1 { animation: pulseRing 2s ease-out 0s infinite; }
@@ -261,14 +255,17 @@ $transition-spring: 400ms cubic-bezier(0.34, 1.56, 0.64, 1);
     }
   }
 
-  // ── Estado: procesando ────────────────────────────────────────
+  // Estado: procesando
   &--processing {
-    background: linear-gradient(135deg, $accent, hsl(210, 80%, 50%));
+    background: #f3f4f6;
+    color: var(--color-accion);
+    border-color: var(--color-borde);
     cursor: wait;
   }
 
   &--disabled {
-    background: hsl(228, 15%, 25%);
+    background: var(--color-borde);
+    color: var(--texto-secundario);
     box-shadow: none;
   }
 
@@ -283,8 +280,7 @@ $transition-spring: 400ms cubic-bezier(0.34, 1.56, 0.64, 1);
   }
 }
 
-// ── Etiqueta del micrófono ────────────────────────────────────────
-
+// Etiqueta del micrófono
 .vs-mic__label {
   font-size: 0.875rem;
   font-weight: 500;
@@ -310,8 +306,7 @@ $transition-spring: 400ms cubic-bezier(0.34, 1.56, 0.64, 1);
   animation: dotBlink 1s ease-in-out infinite;
 }
 
-// ── Transcripción en tiempo real ──────────────────────────────────
-
+// Transcripción en tiempo real
 .vs-transcript {
   @include glass(16px, 0.07);
   border-radius: $radius-md;
@@ -340,8 +335,7 @@ $transition-spring: 400ms cubic-bezier(0.34, 1.56, 0.64, 1);
   }
 }
 
-// ── Barra de búsqueda por texto ───────────────────────────────────
-
+// Barra de búsqueda por texto
 .vs-search-bar {
   display: flex;
   gap: 10px;
@@ -369,20 +363,22 @@ $transition-spring: 400ms cubic-bezier(0.34, 1.56, 0.64, 1);
 
     &:focus {
       border-color: $primary;
-      box-shadow: 0 0 0 3px hsl(256, 80%, 62%, 0.18);
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
     }
   }
 
   &__btn {
     @include btn-base;
-    background: linear-gradient(135deg, $primary, hsl(270, 70%, 50%));
+    background: var(--color-accion);
     color: #fff;
-    box-shadow: $shadow-btn;
+    box-shadow: var(--shadow-subtle);
     padding: 14px 28px;
+    border-radius: var(--radius-md);
 
     &:hover:not(:disabled) {
       transform: translateY(-2px);
-      box-shadow: 0 8px 28px hsl(256, 80%, 45%, 0.55);
+      background: var(--color-accion-hover);
+      box-shadow: var(--shadow-hover);
     }
 
     &:active:not(:disabled) {
@@ -391,8 +387,52 @@ $transition-spring: 400ms cubic-bezier(0.34, 1.56, 0.64, 1);
   }
 }
 
-// ── Alertas ───────────────────────────────────────────────────────
+// Sugerencias rápidas
+.vs-suggestions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  max-width: 560px;
+  width: 100%;
+  flex-wrap: wrap;
+  justify-content: center;
+  animation: fadeInUp 0.4s ease;
 
+  &__label {
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--texto-secundario);
+  }
+
+  &__list {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+}
+
+.vs-suggestion-chip {
+  background: var(--bg-blanco);
+  border: 1px solid var(--color-borde);
+  color: var(--texto-principal);
+  padding: 6px 14px;
+  border-radius: var(--radius-full);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: var(--color-accion);
+    color: #ffffff;
+    border-color: var(--color-accion);
+    transform: translateY(-2px);
+  }
+}
+
+// Alertas
 .vs-alert {
   max-width: 560px;
   width: 100%;
@@ -411,8 +451,7 @@ $transition-spring: 400ms cubic-bezier(0.34, 1.56, 0.64, 1);
   }
 }
 
-// ── Sección de resultados ─────────────────────────────────────────
-
+// Sección de resultados
 .vs-results-section {
   padding: 0 24px;
   max-width: 1200px;
@@ -453,8 +492,7 @@ $transition-spring: 400ms cubic-bezier(0.34, 1.56, 0.64, 1);
   }
 }
 
-// ── Grid de tarjetas ──────────────────────────────────────────────
-
+// Grid de tarjetas
 .vs-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
@@ -466,8 +504,7 @@ $transition-spring: 400ms cubic-bezier(0.34, 1.56, 0.64, 1);
   }
 }
 
-// ── Tarjeta de producto ───────────────────────────────────────────
-
+// Tarjeta de producto
 .vs-card {
   background: $bg-card;
   border-radius: $radius-lg;
@@ -476,19 +513,20 @@ $transition-spring: 400ms cubic-bezier(0.34, 1.56, 0.64, 1);
   transition: all $transition-normal;
   animation: fadeInUp 0.3s ease;
   cursor: default;
+  box-shadow: var(--shadow-subtle);
 
   &:hover {
     transform: translateY(-6px);
     background: $bg-card-hover;
-    border-color: hsl(256, 40%, 30%);
-    box-shadow: $shadow-card, 0 0 24px hsl(256, 60%, 20%);
+    border-color: var(--color-borde-hover);
+    box-shadow: var(--shadow-hover);
   }
 
   &__img-wrapper {
     position: relative;
     width: 100%;
     padding-top: 75%; // aspect-ratio 4:3
-    background: hsl(228, 20%, 9%);
+    background: var(--bg-primary);
     overflow: hidden;
   }
 
@@ -518,19 +556,19 @@ $transition-spring: 400ms cubic-bezier(0.34, 1.56, 0.64, 1);
     top: 10px;
     right: 10px;
     padding: 4px 10px;
-    border-radius: $radius-full;
+    border-radius: var(--radius-sm);
     font-size: 0.72rem;
     font-weight: 700;
-    background: hsl(228, 25%, 6%, 0.85);
+    background: rgba(255, 255, 255, 0.9);
     backdrop-filter: blur(8px);
     border: 1px solid $border-color;
-    color: $text-secondary;
+    color: var(--texto-secundario);
     letter-spacing: 0.03em;
 
     &--low {
-      color: $low-stock-color;
-      border-color: hsl(38, 80%, 40%);
-      background: hsl(38, 70%, 6%, 0.9);
+      color: #b45309;
+      border-color: #f59e0b;
+      background: #fef3c7;
     }
   }
 
@@ -556,10 +594,75 @@ $transition-spring: 400ms cubic-bezier(0.34, 1.56, 0.64, 1);
     margin: 0;
     @include gradient-text($primary-light, $accent);
   }
+
+  &__store-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #f1f5f9;
+    border: 1px solid #e2e8f0;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #334155;
+    cursor: pointer;
+    margin-bottom: 10px;
+    transition: all 0.2s ease;
+
+    &:hover {
+      background: #e0e7ff;
+      border-color: #c7d2fe;
+      color: #4338ca;
+      transform: translateY(-1px);
+    }
+  }
+
+  &__store-rating {
+    background: #fef3c7;
+    color: #d97706;
+    font-weight: 700;
+    font-size: 0.72rem;
+    padding: 1px 6px;
+    border-radius: 12px;
+  }
 }
 
-// ── Estado vacío ──────────────────────────────────────────────────
+// Botón y contenedor Ver Todos los Productos
+.vs-show-more-wrapper {
+  text-align: center;
+  margin-top: 2.5rem;
+  padding: 1.75rem 1rem;
+  background: var(--bg-card, #ffffff);
+  border: 1px dashed var(--border-color, #cbd5e1);
+  border-radius: 1.25rem;
+}
 
+.vs-show-more-hint {
+  font-size: 0.9rem;
+  color: var(--texto-secundario, #64748b);
+  margin-bottom: 1rem;
+}
+
+.vs-btn-show-more {
+  background: var(--color-primary, #6366f1);
+  color: #ffffff;
+  border: none;
+  padding: 0.85rem 2rem;
+  border-radius: 0.85rem;
+  font-weight: 700;
+  font-size: 0.95rem;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.25);
+  transition: all 0.2s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 18px rgba(99, 102, 241, 0.35);
+  }
+}
+
+// Estado vacío
 .vs-empty {
   @include flex-center(column);
   gap: 16px;
@@ -588,8 +691,7 @@ $transition-spring: 400ms cubic-bezier(0.34, 1.56, 0.64, 1);
   }
 }
 
-// ── Botones secundarios ───────────────────────────────────────────
-
+// Botones secundarios
 .vs-btn-secondary {
   @include btn-base;
   background: transparent;
