@@ -1,6 +1,6 @@
 package com.mypes.platform.security;
 
-import java.util.List;
+import java.util.Arrays;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,7 +27,7 @@ public class SecurityConfig {
         private JwtFilter jwtFilter;
 
         @Value("${app.cors.allowed-origin}")
-        private String allowedOrigin;
+        private String allowedOrigins;
 
         @Bean
         public SecurityFilterChain securityFilterChain(HttpSecurity http)
@@ -106,7 +106,7 @@ public class SecurityConfig {
         @Bean
         public CorsConfigurationSource corsConfigurationSource() {
                 CorsConfiguration config = new CorsConfiguration();
-                config.setAllowedOrigins(List.of(allowedOrigin));
+                config.setAllowedOrigins(Arrays.asList(allowedOrigins.split(",")));
                 config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
                 config.setAllowedHeaders(List.of("*"));
                 config.setAllowCredentials(true);
