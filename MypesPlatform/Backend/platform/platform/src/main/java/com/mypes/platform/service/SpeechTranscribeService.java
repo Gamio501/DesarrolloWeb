@@ -11,6 +11,14 @@ import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.util.Enumeration;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -27,12 +35,81 @@ public class SpeechTranscribeService {
     @PostConstruct
     public void init() {
         try {
-            System.out.println("Cargando modelo Vosk desde: " + modelPath);
-            this.model = new Model(modelPath);
+            Path resolvedPath = resolveModelPath();
+            System.out.println("Cargando modelo Vosk desde: " + resolvedPath);
+            this.model = new Model(resolvedPath.toString());
             System.out.println("Modelo Vosk cargado correctamente.");
         } catch (Exception e) {
             System.err.println("Error al cargar el modelo Vosk: " + e.getMessage());
             e.printStackTrace();
+        }
+    }
+
+    private Path resolveModelPath() throws IOException {
+        Path fsPath = Path.of(modelPath);
+        if (Files.isDirectory(fsPath)) {
+            return fsPath;
+        }
+
+        String classpathResource = "models/" + Path.of(modelPath).getFileName();
+        InputStream is = getClass().getClassLoader().getResourceAsStream(classpathResource);
+        if (is == null) {
+            throw new IOException("Modelo Vosk no encontrado en filesystem ni classpath: " + classpathResource);
+        }
+        is.close();
+
+        Path tempDir = Files.createTempDirectory("vosk-model-");
+        extractClasspathResource(classpathResource, tempDir);
+        return tempDir.resolve(Path.of(modelPath).getFileName());
+    }
+
+    private void extractClasspathResource(String resourceBase, Path targetDir) throws IOException {
+        URL url = getClass().getClassLoader().getResource(resourceBase);
+        if (url == null) return;
+
+        if (url.getProtocol().equals("jar")) {
+            String jarPath = url.getPath().substring(5, url.getPath().indexOf("!"));
+            jarPath = java.net.URLDecoder.decode(jarPath, "UTF-8");
+            try (JarFile jar = new JarFile(jarPath)) {
+                Enumeration<JarEntry> entries = jar.entries();
+                while (entries.hasMoreElements()) {
+                    JarEntry entry = entries.nextElement();
+                    if (entry.getName().startsWith(resourceBase + "/")) {
+                        Path entryPath = targetDir.resolve(entry.getName());
+                        if (entry.isDirectory()) {
+                            Files.createDirectories(entryPath);
+                        } else {
+                            Files.createDirectories(entryPath.getParent());
+                            try (InputStream in = jar.getInputStream(entry)) {
+                                Files.copy(in, entryPath, StandardCopyOption.REPLACE_EXISTING);
+                            }
+                        }
+                    }
+                }
+            }
+        } else {
+            try {
+            Path source = Path.of(url.toURI());
+            if (Files.isDirectory(source)) {
+                try (var stream = Files.walk(source)) {
+                    stream.forEach(p -> {
+                        try {
+                            Path dest = targetDir.resolve(source.relativize(p));
+                            if (Files.isDirectory(p)) {
+                                Files.createDirectories(dest);
+                            } else {
+                                Files.createDirectories(dest.getParent());
+                                Files.copy(p, dest, StandardCopyOption.REPLACE_EXISTING);
+                            }
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                    });
+                }
+            }
+            } catch (URISyntaxException e) {
+                throw new IOException("URI inválida para recurso classpath", e);
+            }
         }
     }
 
