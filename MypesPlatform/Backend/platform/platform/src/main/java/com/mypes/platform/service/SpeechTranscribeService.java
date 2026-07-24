@@ -48,38 +48,49 @@ public class SpeechTranscribeService {
             return fsPath;
         }
 
+        String modelName = Path.of(modelPath).getFileName().toString();
+        String basePackage = "models/" + modelName;
+
         PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
-        String classpathBase = "classpath:models/" + Path.of(modelPath).getFileName() + "/**/*";
-        Resource[] resources = resolver.getResources(classpathBase);
+        Resource[] resources = resolver.getResources("classpath:" + basePackage + "/**/*");
 
         if (resources.length == 0) {
             throw new IOException("Modelo Vosk no encontrado en filesystem ni classpath: " + modelPath);
         }
 
         Path tempDir = Files.createTempDirectory("vosk-model-");
-        String baseResourcePath = "models/" + Path.of(modelPath).getFileName();
-
-        Resource baseDir = resolver.getResource("classpath:" + baseResourcePath);
-        if (baseDir != null && baseDir.exists()) {
-            Files.createDirectories(tempDir.resolve(Path.of(modelPath).getFileName()));
-        }
+        Path targetModelDir = tempDir.resolve(modelName);
+        Files.createDirectories(targetModelDir);
 
         for (Resource resource : resources) {
-            if (!resource.exists()) continue;
+            if (!resource.exists() || resource.contentLength() == 0) continue;
 
-            String relPath = resource.getURI().getPath();
-            int idx = relPath.indexOf(baseResourcePath + "/");
-            if (idx == -1) continue;
-            String relative = relPath.substring(idx + baseResourcePath.length() + 1);
+            String desc = resource.getDescription();
+            String relative = extractRelativePath(desc, basePackage);
+            if (relative == null) continue;
 
-            Path dest = tempDir.resolve(Path.of(modelPath).getFileName()).resolve(relative);
+            Path dest = targetModelDir.resolve(relative);
             Files.createDirectories(dest.getParent());
             try (InputStream in = resource.getInputStream()) {
                 Files.copy(in, dest, StandardCopyOption.REPLACE_EXISTING);
             }
+            System.out.println("  Extraído: " + relative);
         }
 
-        return tempDir.resolve(Path.of(modelPath).getFileName());
+        return targetModelDir;
+    }
+
+    private String extractRelativePath(String description, String basePackage) {
+        // description looks like:
+        //   URL [file:/path/models/vosk-model-small-es-0.42/conf/mfcc.conf]
+        //   URL [jar:file:/app/app.jar!/BOOT-INF/classes/models/vosk-model-small-es-0.42/conf/mfcc.conf]
+        String marker = basePackage + "/";
+        int idx = description.indexOf(marker);
+        if (idx == -1) return null;
+        String after = description.substring(idx + marker.length());
+        int end = after.indexOf(']');
+        if (end != -1) after = after.substring(0, end);
+        return after.isEmpty() ? null : after;
     }
 
     @PreDestroy
@@ -111,7 +122,7 @@ public class SpeechTranscribeService {
                 return extractTextFromJson(jsonResult);
             }
         } catch (UnsupportedAudioFileException e) {
-            System.err.println("Formato de audio no soportado por AudioInputStream: " + e.getMessage() + ". Intentando como PCM crudo...");
+            System.err.println("Formato de audio no soportado: " + e.getMessage() + ". Intentando PCM crudo...");
             return transcribeRawPcm(audioData);
         } catch (IOException e) {
             System.err.println("Error de E/S leyendo audio: " + e.getMessage());
@@ -131,9 +142,7 @@ public class SpeechTranscribeService {
     }
 
     private String extractTextFromJson(String json) {
-        if (json == null) {
-            return "";
-        }
+        if (json == null) return "";
         int index = json.indexOf("\"text\"");
         if (index != -1) {
             int start = json.indexOf("\"", index + 6);
