@@ -4,13 +4,14 @@ import { Observable } from 'rxjs';
 import { Tienda } from '../modelos/tienda';
 import { Producto } from '../modelos/producto';
 import { Valoracion } from '../modelos/valoracion';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class TiendaService {
 
-  private baseUrl = 'http://localhost:8880';
+  private baseUrl = environment.apiUrl;
 
   constructor(private http: HttpClient) { }
 

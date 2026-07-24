@@ -6,13 +6,14 @@ import { LoginResponse } from '../modelos/login-response';
 import { Register } from '../modelos/register';
 import { RegisterResponse } from '../modelos/register-response';
 import { Router } from '@angular/router';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class Auth {
 
-  private baseUrl = 'http://localhost:8880/auth';
+  private baseUrl = `${environment.apiUrl}/auth`;
 
   constructor(private http: HttpClient, private router: Router) { }
 
