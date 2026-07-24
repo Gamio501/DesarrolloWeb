@@ -1,6 +1,8 @@
 package com.mypes.platform.service;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.stereotype.Service;
 import org.vosk.Model;
 import org.vosk.Recognizer;
@@ -11,14 +13,9 @@ import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
-import java.util.Enumeration;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -51,66 +48,38 @@ public class SpeechTranscribeService {
             return fsPath;
         }
 
-        String classpathResource = "models/" + Path.of(modelPath).getFileName();
-        InputStream is = getClass().getClassLoader().getResourceAsStream(classpathResource);
-        if (is == null) {
-            throw new IOException("Modelo Vosk no encontrado en filesystem ni classpath: " + classpathResource);
+        PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
+        String classpathBase = "classpath:models/" + Path.of(modelPath).getFileName() + "/**/*";
+        Resource[] resources = resolver.getResources(classpathBase);
+
+        if (resources.length == 0) {
+            throw new IOException("Modelo Vosk no encontrado en filesystem ni classpath: " + modelPath);
         }
-        is.close();
 
         Path tempDir = Files.createTempDirectory("vosk-model-");
-        extractClasspathResource(classpathResource, tempDir);
-        return tempDir.resolve(Path.of(modelPath).getFileName());
-    }
+        String baseResourcePath = "models/" + Path.of(modelPath).getFileName();
 
-    private void extractClasspathResource(String resourceBase, Path targetDir) throws IOException {
-        URL url = getClass().getClassLoader().getResource(resourceBase);
-        if (url == null) return;
+        Resource baseDir = resolver.getResource("classpath:" + baseResourcePath);
+        if (baseDir != null && baseDir.exists()) {
+            Files.createDirectories(tempDir.resolve(Path.of(modelPath).getFileName()));
+        }
 
-        if (url.getProtocol().equals("jar")) {
-            String jarPath = url.getPath().substring(5, url.getPath().indexOf("!"));
-            jarPath = java.net.URLDecoder.decode(jarPath, "UTF-8");
-            try (JarFile jar = new JarFile(jarPath)) {
-                Enumeration<JarEntry> entries = jar.entries();
-                while (entries.hasMoreElements()) {
-                    JarEntry entry = entries.nextElement();
-                    if (entry.getName().startsWith(resourceBase + "/")) {
-                        Path entryPath = targetDir.resolve(entry.getName());
-                        if (entry.isDirectory()) {
-                            Files.createDirectories(entryPath);
-                        } else {
-                            Files.createDirectories(entryPath.getParent());
-                            try (InputStream in = jar.getInputStream(entry)) {
-                                Files.copy(in, entryPath, StandardCopyOption.REPLACE_EXISTING);
-                            }
-                        }
-                    }
-                }
-            }
-        } else {
-            try {
-            Path source = Path.of(url.toURI());
-            if (Files.isDirectory(source)) {
-                try (var stream = Files.walk(source)) {
-                    stream.forEach(p -> {
-                        try {
-                            Path dest = targetDir.resolve(source.relativize(p));
-                            if (Files.isDirectory(p)) {
-                                Files.createDirectories(dest);
-                            } else {
-                                Files.createDirectories(dest.getParent());
-                                Files.copy(p, dest, StandardCopyOption.REPLACE_EXISTING);
-                            }
-                        } catch (IOException e) {
-                            throw new RuntimeException(e);
-                        }
-                    });
-                }
-            }
-            } catch (URISyntaxException e) {
-                throw new IOException("URI inválida para recurso classpath", e);
+        for (Resource resource : resources) {
+            if (!resource.exists()) continue;
+
+            String relPath = resource.getURI().getPath();
+            int idx = relPath.indexOf(baseResourcePath + "/");
+            if (idx == -1) continue;
+            String relative = relPath.substring(idx + baseResourcePath.length() + 1);
+
+            Path dest = tempDir.resolve(Path.of(modelPath).getFileName()).resolve(relative);
+            Files.createDirectories(dest.getParent());
+            try (InputStream in = resource.getInputStream()) {
+                Files.copy(in, dest, StandardCopyOption.REPLACE_EXISTING);
             }
         }
+
+        return tempDir.resolve(Path.of(modelPath).getFileName());
     }
 
     @PreDestroy
@@ -127,17 +96,17 @@ public class SpeechTranscribeService {
 
         try (InputStream bis = new ByteArrayInputStream(audioData);
              AudioInputStream ais = AudioSystem.getAudioInputStream(new BufferedInputStream(bis))) {
-            
+
             AudioFormat format = ais.getFormat();
             float sampleRate = format.getSampleRate();
-            
+
             try (Recognizer recognizer = new Recognizer(model, (int) sampleRate)) {
                 byte[] buffer = new byte[4096];
                 int bytesRead;
                 while ((bytesRead = ais.read(buffer)) >= 0) {
                     recognizer.acceptWaveForm(buffer, bytesRead);
                 }
-                
+
                 String jsonResult = recognizer.getFinalResult();
                 return extractTextFromJson(jsonResult);
             }
